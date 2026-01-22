@@ -27,7 +27,7 @@ public class NetworkPathConductivityContext {
 
     protected long calculatePathConductivity(NetworkPath path) {
         ElectricalConnectorBlockEntity prevNode = null;
-        long conductivity = Long.MAX_VALUE;
+        long conductivity = -1; // Use -1 as uninitialized, 0 means no path
 
         for (ElectricalConnectorBlockEntity node : path.getNodes()) {
             if (prevNode == null) {
@@ -41,11 +41,18 @@ public class NetworkPathConductivityContext {
                 return 0;
 
             long connectionConductivity = connections.get(key).getB();
-            conductivity = Math.min(connectionConductivity, conductivity);
+
+            // Initialize conductivity with first connection's value
+            if (conductivity == -1) {
+                conductivity = connectionConductivity;
+            } else {
+                conductivity = Math.min(connectionConductivity, conductivity);
+            }
+
             prevNode = node;
         }
 
-        return conductivity;
+        return conductivity > 0 ? conductivity : 0;
     }
 
     protected void decreasePathConductivity(NetworkPath path, long amount) {
@@ -59,7 +66,8 @@ public class NetworkPathConductivityContext {
 
             NetworkPathKey<ElectricalConnectorBlockEntity> key = new NetworkPathKey<>(prevNode, node);
             long connectionConductivity = connections.get(key).getB();
-            connections.get(key).setB(connectionConductivity - amount);
+            long newConductivity = Math.max(0, connectionConductivity - amount); // Prevent negative values
+            connections.get(key).setB(newConductivity);
             prevNode = node;
         }
     }
@@ -69,7 +77,19 @@ public class NetworkPathConductivityContext {
     }
 
     protected void updateConductivity() {
-        for (Map.Entry<NetworkPathKey<ElectricalConnectorBlockEntity>, Tuple<Long, Long>> e : connections.entrySet())
-            connections.get(e.getKey()).setB(e.getValue().getA());
+        // Gradually restore conductivity instead of full reset
+        // This creates a "cooling" effect for wires
+        double recoveryRate = 0.25; // Restore 25% per tick
+
+        for (Map.Entry<NetworkPathKey<ElectricalConnectorBlockEntity>, Tuple<Long, Long>> e : connections.entrySet()) {
+            long maxConductivity = e.getValue().getA();
+            long currentConductivity = e.getValue().getB();
+
+            if (currentConductivity < maxConductivity) {
+                long recoveryAmount = (long) ((maxConductivity - currentConductivity) * recoveryRate);
+                long newConductivity = Math.min(maxConductivity, currentConductivity + recoveryAmount);
+                connections.get(e.getKey()).setB(newConductivity);
+            }
+        }
     }
 }
