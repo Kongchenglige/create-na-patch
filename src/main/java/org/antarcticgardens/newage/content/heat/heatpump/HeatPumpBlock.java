@@ -141,6 +141,7 @@ public class HeatPumpBlock extends Block implements EntityBlock, IWrenchable {
             BlockEntity entity = world.getBlockEntity(blockPos.relative(facing));
             if (entity instanceof HeatBlockEntity hbe && hbe.canAdd(facing)) {
                 float ht = self.heat;
+                ht = Math.min(ht, hbe.maxHeat() - hbe.getHeat());
                 hbe.addHeat(ht);
                 self.lastPump += ht;
                 self.heat -= ht;

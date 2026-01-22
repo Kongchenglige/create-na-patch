@@ -2,7 +2,7 @@
   "type": "create:compacting",
   "ingredients": [
     {
-      "tag": "c:stone"
+      "tag": "forge:stone"
     },
     {
       "item": "minecraft:redstone"

@@ -1,7 +1,5 @@
 package org.antarcticgardens.newage.content.reactor;
 
-import net.fabricmc.api.EnvType;
-import net.fabricmc.api.Environment;
 import net.minecraft.core.BlockPos;
 import net.minecraft.core.Direction;
 import net.minecraft.world.level.BlockGetter;
@@ -20,7 +18,6 @@ public class ReactorTransparentBlock extends ReactorBlock {
     }
 
     @Override
-    @Environment(EnvType.CLIENT)
     public boolean skipRendering(BlockState state, BlockState adjacentBlockState, Direction side) {
         return adjacentBlockState.getBlock() instanceof ReactorTransparentBlock || super.skipRendering(state, adjacentBlockState, side);
     }

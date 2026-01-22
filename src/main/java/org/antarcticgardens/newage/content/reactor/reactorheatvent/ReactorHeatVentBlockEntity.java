@@ -1,7 +1,7 @@
 package org.antarcticgardens.newage.content.reactor.reactorheatvent;
 
-import com.simibubi.create.content.equipment.goggles.IHaveGoggleInformation;
-import com.simibubi.create.foundation.utility.Lang;
+import com.simibubi.create.api.equipment.goggles.IHaveGoggleInformation;
+import com.simibubi.create.foundation.utility.CreateLang;
 import net.minecraft.ChatFormatting;
 import net.minecraft.core.BlockPos;
 import net.minecraft.core.Direction;
@@ -14,6 +14,7 @@ import net.minecraft.world.level.Level;
 import net.minecraft.world.level.block.entity.BlockEntity;
 import net.minecraft.world.level.block.entity.BlockEntityType;
 import net.minecraft.world.level.block.state.BlockState;
+import net.minecraft.world.level.block.state.properties.BlockStateProperties;
 import org.antarcticgardens.newage.config.NewAgeConfig;
 import org.antarcticgardens.newage.content.heat.HeatBlockEntity;
 import org.antarcticgardens.newage.content.reactor.RodFindingReactorBlockEntity;
@@ -48,6 +49,11 @@ public class ReactorHeatVentBlockEntity extends RodFindingReactorBlockEntity imp
         tag.putFloat("extract", extract);
     }
 
+
+    @Override
+    public boolean canConnect(Direction from) {
+        return from != getBlockState().getValue(BlockStateProperties.FACING);
+    }
 
     @Override
     public float getHeat() {
@@ -127,9 +133,9 @@ public class ReactorHeatVentBlockEntity extends RodFindingReactorBlockEntity imp
     public boolean addToGoggleTooltip(List<Component> tooltip, boolean isPlayerSneaking) {
         HeatBlockEntity.addToolTips(this, tooltip);
 
-        Lang.translate("tooltip.create_new_age.extracting")
+        CreateLang.translate("tooltip.create_new_age.extracting")
                 .style(ChatFormatting.GRAY).forGoggles(tooltip, 1);
-        Lang.translate("tooltip.create_new_age.temperature", StringFormattingTool.formatFloat(extract))
+        CreateLang.translate("tooltip.create_new_age.temperature", StringFormattingTool.formatFloat(extract))
                 .style(ChatFormatting.AQUA).forGoggles(tooltip, 2);
         return true;
     }

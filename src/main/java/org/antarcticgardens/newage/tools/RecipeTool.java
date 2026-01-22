@@ -1,19 +1,30 @@
 package org.antarcticgardens.newage.tools;
 
 import com.simibubi.create.foundation.recipe.IRecipeTypeInfo;
-import net.minecraft.core.Registry;
-import net.minecraft.core.registries.BuiltInRegistries;
 import net.minecraft.resources.ResourceLocation;
 import net.minecraft.world.item.crafting.RecipeSerializer;
 import net.minecraft.world.item.crafting.RecipeType;
+import net.minecraftforge.registries.DeferredRegister;
+import net.minecraftforge.registries.ForgeRegistries;
 import org.antarcticgardens.newage.CreateNewAge;
 
 import static org.antarcticgardens.newage.CreateNewAge.MOD_ID;
 
 public class RecipeTool {
+
+    public static final DeferredRegister<RecipeType<?>> register_type = DeferredRegister.create(ForgeRegistries.RECIPE_TYPES, MOD_ID);
+    public static final DeferredRegister<RecipeSerializer<?>> register = DeferredRegister.create(ForgeRegistries.RECIPE_SERIALIZERS, MOD_ID);
     public static <S extends RecipeSerializer<?>> IRecipeTypeInfo createIRecipeTypeInfo(String name, S serializer) {
-        RecipeType<?> type = RecipeType.register(name);
-        Registry.register(BuiltInRegistries.RECIPE_SERIALIZER, new ResourceLocation(MOD_ID, name), serializer);
+        var rt = new RecipeType() {
+            @Override
+            public String toString() {
+                return name;
+            }
+        };
+
+        register.register(name, () -> serializer);
+
+        register_type.register(name, () -> rt);
 
         return new IRecipeTypeInfo() {
             @Override
@@ -28,7 +39,7 @@ public class RecipeTool {
 
             @Override
             public <T extends RecipeType<?>> T getType() {
-                return (T) type;
+                return (T) rt;
             }
         };
     }

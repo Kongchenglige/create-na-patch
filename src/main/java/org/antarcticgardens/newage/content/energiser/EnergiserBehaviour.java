@@ -7,12 +7,13 @@ import com.simibubi.create.content.kinetics.belt.transport.TransportedItemStack;
 import com.simibubi.create.content.processing.sequenced.SequencedAssemblyRecipe;
 import earth.terrarium.botarium.common.energy.base.PlatformItemEnergyManager;
 import earth.terrarium.botarium.common.energy.util.EnergyHooks;
-import earth.terrarium.botarium.common.item.ItemStackHolder;
 import net.minecraft.core.particles.ParticleTypes;
 import net.minecraft.nbt.CompoundTag;
 import net.minecraft.sounds.SoundEvents;
 import net.minecraft.sounds.SoundSource;
 import net.minecraft.world.item.ItemStack;
+import net.minecraftforge.common.capabilities.ForgeCapabilities;
+import org.antarcticgardens.newage.CreateNewAge;
 import org.joml.Math;
 
 import java.util.List;
@@ -37,14 +38,13 @@ public class EnergiserBehaviour extends BeltProcessingBehaviour {
         }
 
         Optional<EnergisingRecipe> assemblyRecipe =
-                SequencedAssemblyRecipe.getRecipe(getWorld(), stack, EnergisingRecipe.type.getType(), EnergisingRecipe.class);
-
+                SequencedAssemblyRecipe.getRecipe(getWorld(), stack, CreateNewAge.ENERGISING_RECIPE_TYPE.getType(), EnergisingRecipe.class);
 
         if (assemblyRecipe.isPresent()) {
             return assemblyRecipe.get();
         }
 
-        List<EnergisingRecipe> recipes = be.getLevel().getRecipeManager().getAllRecipesFor(EnergisingRecipe.type.getType());
+        List<EnergisingRecipe> recipes = be.getLevel().getRecipeManager().getAllRecipesFor(CreateNewAge.ENERGISING_RECIPE_TYPE.getType());
 
         for (EnergisingRecipe recipe : recipes) {
             if (recipe.test(stack)) {
@@ -147,17 +147,27 @@ public class EnergiserBehaviour extends BeltProcessingBehaviour {
         if (capacitorMode) {
             if (EnergyHooks.isEnergyItem(transportedItemStack.stack)) {
 
-                var stack = new ItemStackHolder(transportedItemStack.stack);
+                var c = transportedItemStack.stack.getCapability(ForgeCapabilities.ENERGY).resolve();
 
-                be.lastCharged = EnergyHooks.safeMoveBlockToItemEnergy(be, null, stack,
-                        eSpeed());
+                if (c.isEmpty()) {
+                    capacitorMode = false;
+                    charged = 0;
+                    needed = 0;
+                    shouldCreateParticles = true;
+                    return ProcessingResult.PASS;
+                }
+                var capability = c.get();
 
-                PlatformItemEnergyManager container = EnergyHooks.getItemEnergyManager(stack.getStack());
+                long extr = be.energy.internalExtract(eSpeed(), true);
+                long insr = capability.receiveEnergy((int)extr, true);
 
-                charged = container.getStoredEnergy();
-                needed = container.getCapacity();
+                be.lastCharged = be.energy.extractEnergy(insr, false);
+                capability.receiveEnergy((int)insr, false);
+
+                charged = capability.getEnergyStored();
+                needed = capability.getMaxEnergyStored();
                 sinceUpdate = 10;
-                transportedItemStack.stack = stack.getStack();
+
 
                 blockEntity.sendData();
 
@@ -226,16 +236,14 @@ public class EnergiserBehaviour extends BeltProcessingBehaviour {
             return ProcessingResult.PASS;
         }
 
-        if (EnergyHooks.isEnergyItem(transportedItemStack.stack)) {
-            var energy = EnergyHooks.getItemEnergyManager(transportedItemStack.stack);
-            if (energy.getStoredEnergy() < energy.getCapacity()) {
-                capacitorMode = true;
-                PlatformItemEnergyManager container = EnergyHooks.getItemEnergyManager(transportedItemStack.stack);
-                charged = container.getStoredEnergy();
-                needed = container.getCapacity();
-                sinceUpdate = 10;
-                return ProcessingResult.HOLD;
-            }
+        var c = transportedItemStack.stack.getCapability(ForgeCapabilities.ENERGY).resolve();
+        if (c.isPresent() && c.get().getEnergyStored() < c.get().getMaxEnergyStored()) {
+            capacitorMode = true;
+            PlatformItemEnergyManager container = EnergyHooks.getItemEnergyManager(transportedItemStack.stack);
+            charged = container.getStoredEnergy();
+            needed = container.getCapacity();
+            sinceUpdate = 10;
+            return ProcessingResult.HOLD;
         }
         capacitorMode = false;
 

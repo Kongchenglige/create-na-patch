@@ -3,10 +3,10 @@
   "category": "building",
   "key": {
     "c": {
-      "tag": "c:copper_plates"
+      "tag": "forge:plates/copper"
     },
     "z": {
-      "tag": "c:zinc_nuggets"
+      "tag": "forge:nuggets/zinc"
     },
     "t": {
       "tag": "minecraft:terracotta"

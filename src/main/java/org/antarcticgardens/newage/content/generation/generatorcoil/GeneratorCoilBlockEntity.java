@@ -3,7 +3,7 @@ package org.antarcticgardens.newage.content.generation.generatorcoil;
 import com.google.common.collect.Lists;
 import com.simibubi.create.content.kinetics.base.KineticBlockEntity;
 import com.simibubi.create.content.kinetics.base.RotatedPillarKineticBlock;
-import com.simibubi.create.foundation.utility.Lang;
+import com.simibubi.create.foundation.utility.CreateLang;
 import net.minecraft.ChatFormatting;
 import net.minecraft.core.BlockPos;
 import net.minecraft.network.chat.Component;
@@ -117,11 +117,12 @@ public class GeneratorCoilBlockEntity extends KineticBlockEntity {
 
     @Override
     public boolean addToGoggleTooltip(List<Component> tooltip, boolean isPlayerSneaking) {
-        Lang.translate("tooltip.create_new_age.efficiency").style(ChatFormatting.GRAY).forGoggles(tooltip, 1);
-        Lang.translate("tooltip.create_new_age.percent", StringFormattingTool.formatPercentFloat(
+        CreateLang.translate("tooltip.create_new_age.efficiency").style(ChatFormatting.GRAY).forGoggles(tooltip, 1);
+        CreateLang.translate("tooltip.create_new_age.percent", StringFormattingTool.formatPercentFloat(
                 (lastStressApplied-plainStress)/lastStressApplied
         )).style(ChatFormatting.AQUA).forGoggles(tooltip, 2);
-        return super.addToGoggleTooltip(tooltip, isPlayerSneaking);
+        super.addToGoggleTooltip(tooltip, isPlayerSneaking);
+        return true;
     }
 
     public int takeGeneratedEnergy() {

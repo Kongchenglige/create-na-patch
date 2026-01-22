@@ -1,11 +1,10 @@
 package org.antarcticgardens.newage.content.energiser;
 
 import com.google.gson.JsonObject;
-import com.simibubi.create.compat.recipeViewerCommon.SequencedAssemblySubCategoryType;
+import com.simibubi.create.compat.jei.category.sequencedAssembly.SequencedAssemblySubCategory;
 import com.simibubi.create.content.processing.recipe.ProcessingRecipe;
 import com.simibubi.create.content.processing.recipe.ProcessingRecipeBuilder;
 import com.simibubi.create.content.processing.sequenced.IAssemblyRecipe;
-import com.simibubi.create.foundation.recipe.IRecipeTypeInfo;
 import net.minecraft.network.FriendlyByteBuf;
 import net.minecraft.network.chat.Component;
 import net.minecraft.world.Container;
@@ -13,28 +12,21 @@ import net.minecraft.world.item.ItemStack;
 import net.minecraft.world.item.crafting.Ingredient;
 import net.minecraft.world.level.ItemLike;
 import net.minecraft.world.level.Level;
+import org.antarcticgardens.newage.CreateNewAge;
 import org.antarcticgardens.newage.NewAgeBlocks;
-import org.antarcticgardens.newage.compat.emi.EmiEnergisingSubcategory;
-import org.antarcticgardens.newage.compat.jei.JeiEnergisingSubcategory;
-import org.antarcticgardens.newage.compat.rei.ReiEnergiserSubCategory;
+import org.antarcticgardens.newage.compat.jei.JeiEnergisingSubCategory;
 import org.jetbrains.annotations.NotNull;
 
 import java.util.List;
 import java.util.Set;
+import java.util.function.Supplier;
 
 public class EnergisingRecipe extends ProcessingRecipe<Container> implements IAssemblyRecipe {
-
-    public static SequencedAssemblySubCategoryType subCategoryType = new SequencedAssemblySubCategoryType(
-            () -> JeiEnergisingSubcategory::new,
-            () -> ReiEnergiserSubCategory::new,
-            () -> EmiEnergisingSubcategory::new
-    ); // TODO
-
-    public static IRecipeTypeInfo type;
+    public static JeiEnergisingSubCategory subCategory;
 
     public int energyNeeded;
     public EnergisingRecipe(ProcessingRecipeBuilder.ProcessingRecipeParams params) {
-        super(type, params);
+        super(CreateNewAge.ENERGISING_RECIPE_TYPE, params);
     }
 
     @Override
@@ -81,9 +73,13 @@ public class EnergisingRecipe extends ProcessingRecipe<Container> implements IAs
     public void addAssemblyIngredients(List<Ingredient> list) {}
 
     @Override
-    public SequencedAssemblySubCategoryType getJEISubCategory() {
-        return subCategoryType;
+    public Supplier<Supplier<SequencedAssemblySubCategory>> getJEISubCategory() {
+        if (subCategory == null)
+            subCategory = new JeiEnergisingSubCategory();
+
+        return () -> () -> subCategory;
     }
+
 
     @Override
     public boolean matches(Container container, @NotNull Level level) {
@@ -97,7 +93,4 @@ public class EnergisingRecipe extends ProcessingRecipe<Container> implements IAs
         return ingredients.get(0)
                 .test(stack);
     }
-
-
-
 }

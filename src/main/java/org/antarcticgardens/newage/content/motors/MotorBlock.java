@@ -1,10 +1,11 @@
 package org.antarcticgardens.newage.content.motors;
 
 
+import com.simibubi.create.content.equipment.wrench.IWrenchable;
 import com.simibubi.create.content.kinetics.base.DirectionalKineticBlock;
 import com.simibubi.create.content.kinetics.base.IRotate;
 import com.simibubi.create.foundation.block.IBE;
-import com.simibubi.create.foundation.utility.Lang;
+import com.simibubi.create.foundation.utility.CreateLang;
 import com.tterrag.registrate.util.entry.BlockEntityEntry;
 import net.minecraft.ChatFormatting;
 import net.minecraft.core.BlockPos;
@@ -49,19 +50,19 @@ public class MotorBlock extends DirectionalKineticBlock implements IRotate, IBE<
 
     @Override
     public void appendHoverText(ItemStack stack, @Nullable BlockGetter level, List<Component> tooltip, TooltipFlag flag) {
-        tooltip.add(Lang.translate("tooltip.create_new_age.generates").style(ChatFormatting.GRAY)
+        tooltip.add(CreateLang.translate("tooltip.create_new_age.generates").style(ChatFormatting.GRAY)
                 .component());
-        tooltip.add(Lang.text(" ").add(Lang.number(variant.getStress() * NewAgeConfig.getCommon().motorSUMultiplier.get()).text(" ")
+        tooltip.add(CreateLang.text(" ").add(CreateLang.number(variant.getStress() * NewAgeConfig.getCommon().motorSUMultiplier.get()).text(" ")
                 .translate("generic.unit.stress").style(ChatFormatting.AQUA)).component());
 
-        tooltip.add(Lang.translate("tooltip.create_new_age.stores").style(ChatFormatting.GRAY)
+        tooltip.add(CreateLang.translate("tooltip.create_new_age.stores").style(ChatFormatting.GRAY)
                 .component());
-        tooltip.add(Lang.text(" ").translate("tooltip.create_new_age.energy",
+        tooltip.add(CreateLang.text(" ").translate("tooltip.create_new_age.energy",
                                              StringFormattingTool.formatLong(variant.getMaxCapacity())).style(ChatFormatting.AQUA).component());
 
-        tooltip.add(Lang.translate("tooltip.create_new_age.max_speed").style(ChatFormatting.GRAY)
+        tooltip.add(CreateLang.translate("tooltip.create_new_age.max_speed").style(ChatFormatting.GRAY)
                 .component());
-        tooltip.add(Lang.text(" ").translate("tooltip.create_new_age.rpm", variant.getSpeed()).style(ChatFormatting.AQUA).component());
+        tooltip.add(CreateLang.text(" ").translate("tooltip.create_new_age.rpm", variant.getSpeed()).style(ChatFormatting.AQUA).component());
     }
 
     @Override
@@ -107,7 +108,7 @@ public class MotorBlock extends DirectionalKineticBlock implements IRotate, IBE<
 
             state.spawnAfterBreak((ServerLevel)world, pos, ItemStack.EMPTY, true);
             world.destroyBlock(pos, false);
-            this.playRemoveSound(world, pos);
+            IWrenchable.playRemoveSound(world, pos);
         }
 
         return InteractionResult.SUCCESS;

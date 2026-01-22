@@ -14,51 +14,56 @@ import net.minecraft.world.item.Item;
 import net.minecraft.world.item.ItemStack;
 import net.minecraft.world.level.Level;
 import net.minecraft.world.level.block.Block;
-import net.minecraft.world.level.block.state.BlockState;
 import net.minecraft.world.level.entity.EntityTypeTest;
-import net.minecraft.world.phys.*;
+import net.minecraft.world.phys.AABB;
+import net.minecraft.world.phys.BlockHitResult;
+import net.minecraft.world.phys.HitResult;
+import net.minecraft.world.phys.Vec3;
 import org.antarcticgardens.newage.CreateNewAge;
 import org.antarcticgardens.newage.tools.RaycastUtil;
 
 import java.util.List;
-import java.util.function.Predicate;
 
 public class NuclearUtil {
     public static final TagKey<Block> STOPS_RADIATION = new TagKey<>(Registries.BLOCK, new ResourceLocation(CreateNewAge.MOD_ID, "stops_radiation"));
     public static final TagKey<Item> HAZMAT_SUIT = new TagKey<>(Registries.ITEM, new ResourceLocation(CreateNewAge.MOD_ID, "nuclear/hazmat_suit"));
 
     public static void createRadiation(int length, Level world, BlockPos pos) {
-        if (world.isClientSide())
-            return;
+        try { // weird and temporary solution for certain incompatability. TODO
+            if (world.isClientSide())
+                return;
 
-        List<LivingEntity> entities = world.getEntities(EntityTypeTest.forClass(LivingEntity.class), new AABB(pos).inflate(length),
-                livingEntity -> !isResistant(livingEntity));
+            List<LivingEntity> entities = world.getEntities(EntityTypeTest.forClass(LivingEntity.class), new AABB(pos).inflate(length),
+                    livingEntity -> !isResistant(livingEntity));
 
-        for (LivingEntity le : entities) {
-            for (Direction dir : Direction.values()) {
-                if (world.getBlockState(pos.relative(dir)).is(STOPS_RADIATION))
-                    continue;
-
-                Vec3 start = pos.getCenter().relative(dir, 0.5f);
-                double distance = le.getEyePosition().distanceTo(start);
-
-                if (distance > length)
-                    continue;
-
-                Vec3 direction = le.getEyePosition().subtract(start).normalize();
-                HitResult hitResult = RaycastUtil.pickFilteredBlockFromPos(world, start, direction, (float) Math.ceil(distance), bs -> bs.is(STOPS_RADIATION));
-
-                if (hitResult instanceof BlockHitResult bhr) {
-                    if (world.getBlockState(bhr.getBlockPos()).is(STOPS_RADIATION))
+            for (LivingEntity le : entities) {
+                for (Direction dir : Direction.values()) {
+                    if (world.getBlockState(pos.relative(dir)).is(STOPS_RADIATION))
                         continue;
 
-                    if (bhr.getLocation().distanceTo(start) < distance)
+                    Vec3 start = pos.getCenter().relative(dir, 0.5f);
+                    double distance = le.getEyePosition().distanceTo(start);
+
+                    if (distance > length)
                         continue;
+
+                    Vec3 direction = le.getEyePosition().subtract(start).normalize();
+                    HitResult hitResult = RaycastUtil.pickFilteredBlockFromPos(world, start, direction, (float) Math.ceil(distance), bs -> bs.is(STOPS_RADIATION));
+
+                    if (hitResult instanceof BlockHitResult bhr) {
+                        if (world.getBlockState(bhr.getBlockPos()).is(STOPS_RADIATION))
+                            continue;
+
+                        if (bhr.getLocation().distanceTo(start) < distance)
+                            continue;
+                    }
+
+                    irradiate(le);
+                    break;
                 }
-
-                irradiate(le);
-                break;
             }
+        } catch (Exception ignored) {
+
         }
     }
 

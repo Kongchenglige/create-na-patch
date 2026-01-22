@@ -1,8 +1,9 @@
 package org.antarcticgardens.newage.content.energiser;
 
+import com.simibubi.create.api.stress.BlockStressValues;
 import com.simibubi.create.content.kinetics.base.KineticBlockEntity;
 import com.simibubi.create.foundation.blockEntity.behaviour.BlockEntityBehaviour;
-import com.simibubi.create.foundation.utility.Lang;
+import com.simibubi.create.foundation.utility.CreateLang;
 import earth.terrarium.botarium.common.energy.base.BotariumEnergyBlock;
 import earth.terrarium.botarium.common.energy.impl.InsertOnlyEnergyContainer;
 import earth.terrarium.botarium.common.energy.impl.WrappedBlockEnergyContainer;
@@ -13,7 +14,7 @@ import net.minecraft.world.level.block.entity.BlockEntityType;
 import net.minecraft.world.level.block.state.BlockState;
 import net.minecraft.world.phys.AABB;
 import net.minecraft.world.phys.Vec3;
-import org.antarcticgardens.newage.energy.SimpleEnergyContainer;
+import org.antarcticgardens.newage.energy.InsertOnlyResizableEnergyContainer;
 import org.antarcticgardens.newage.tools.StringFormattingTool;
 
 import java.util.List;
@@ -24,13 +25,17 @@ public class EnergiserBlockEntity extends KineticBlockEntity implements Botarium
     public int tier;
     public float size = 0f;
     private EnergiserBehaviour energisingBehaviour;
+    private InsertOnlyResizableEnergyContainer mut;
 
     public EnergiserBlockEntity(BlockEntityType<?> type, BlockPos pos, BlockState state, int tier) {
         super(type, pos, state);
-        energy = new WrappedBlockEnergyContainer(
-                this, new InsertOnlyEnergyContainer(EnergiserBlock.getCapacity(tier)));
         this.tier = tier;
         this.energisingBehaviour.tier = tier;
+        if (mut == null) {
+            getOrCreateNetwork();
+            mut = new InsertOnlyResizableEnergyContainer((long) (Math.pow(10, tier) * 1000));
+        }
+        mut.setMaxCapacity((long) (Math.pow(10, tier) * 1000));
     }
 
     protected AABB createRenderBoundingBox() {
@@ -59,20 +64,20 @@ public class EnergiserBlockEntity extends KineticBlockEntity implements Botarium
     public long lastCharged = -1;
     @Override
     public boolean addToGoggleTooltip(List<Component> tooltip, boolean isPlayerSneaking) {
-        Lang.translate("tooltip.create_new_age.energy_stats")
+        CreateLang.translate("tooltip.create_new_age.energy_stats")
                 .style(ChatFormatting.WHITE).forGoggles(tooltip);
 
-        Lang.translate("tooltip.create_new_age.energy_stored")
+        CreateLang.translate("tooltip.create_new_age.energy_stored")
                 .style(ChatFormatting.GRAY)
                 .forGoggles(tooltip);
-        Lang.translate("tooltip.create_new_age.energy_storage", StringFormattingTool.formatLong(energy.getStoredEnergy()), StringFormattingTool.formatLong(energy.getMaxCapacity()))
+        CreateLang.translate("tooltip.create_new_age.energy_storage", StringFormattingTool.formatLong(energy.getStoredEnergy()), StringFormattingTool.formatLong(energy.getMaxCapacity()))
                 .style(ChatFormatting.AQUA).forGoggles(tooltip, 1);
 
         if (lastCharged != -1) {
-            Lang.translate("tooltip.create_new_age.energy_usage")
+            CreateLang.translate("tooltip.create_new_age.energy_usage")
                     .style(ChatFormatting.GRAY)
                     .forGoggles(tooltip);
-            Lang.translate("tooltip.create_new_age.energy_per_tick", StringFormattingTool.formatLong(lastCharged))
+            CreateLang.translate("tooltip.create_new_age.energy_per_tick", StringFormattingTool.formatLong(lastCharged))
                     .style(ChatFormatting.AQUA).forGoggles(tooltip, 1);
         }
 
@@ -81,6 +86,20 @@ public class EnergiserBlockEntity extends KineticBlockEntity implements Botarium
 
     @Override
     public WrappedBlockEnergyContainer getEnergyStorage() {
-        return energy;
+        return energy == null ? energy = new WrappedBlockEnergyContainer(this, mut = new InsertOnlyResizableEnergyContainer(0)) : energy;
+    }
+
+    @Override
+    public float calculateStressApplied() {
+        float impact;
+        if (this.tier == 1) {
+            impact = 4.0f;
+        } else if (this.tier == 2) {
+            impact = 8.0f;
+        } else {
+            impact = 32.0f;
+        }
+        this.lastStressApplied = impact;
+        return impact;
     }
 }

@@ -1,9 +1,9 @@
 package org.antarcticgardens.newage.content.electricity.connector;
 
-import com.simibubi.create.content.equipment.goggles.IHaveGoggleInformation;
-import com.simibubi.create.foundation.utility.Lang;
-import com.simibubi.create.foundation.utility.NBTHelper;
+import com.simibubi.create.api.equipment.goggles.IHaveGoggleInformation;
+import com.simibubi.create.foundation.utility.CreateLang;
 import earth.terrarium.botarium.common.energy.base.BotariumEnergyBlock;
+import net.createmod.catnip.nbt.NBTHelper;
 import net.minecraft.ChatFormatting;
 import net.minecraft.core.BlockPos;
 import net.minecraft.core.NonNullList;
@@ -23,6 +23,7 @@ import net.minecraft.world.level.block.entity.BlockEntity;
 import net.minecraft.world.level.block.entity.BlockEntityType;
 import net.minecraft.world.level.block.state.BlockState;
 import net.minecraft.world.level.block.state.properties.BlockStateProperties;
+import net.minecraft.world.phys.AABB;
 import org.antarcticgardens.newage.content.electricity.network.ElectricalNetwork;
 import org.antarcticgardens.newage.content.electricity.network.NetworkEnergyContainer;
 import org.antarcticgardens.newage.content.electricity.wire.WireType;
@@ -34,13 +35,12 @@ public class ElectricalConnectorBlockEntity extends BlockEntity implements Botar
     private final Map<BlockPos, WireType> connectorPositions = new HashMap<>();
 
     private ElectricalNetwork network;
-    private final NetworkEnergyContainer energyContainer;
+    private NetworkEnergyContainer energyContainer;
 
     private boolean connectionsInitialized = false;
 
     public ElectricalConnectorBlockEntity(BlockEntityType<?> type, BlockPos pos, BlockState blockState) {
         super(type, pos, blockState);
-        energyContainer = new NetworkEnergyContainer(this, null);
     }
 
     @Override
@@ -75,6 +75,11 @@ public class ElectricalConnectorBlockEntity extends BlockEntity implements Botar
     }
 
     @Override
+    public AABB getRenderBoundingBox() {
+        return INFINITE_EXTENT_AABB;
+    }
+
+    @Override
     public Packet<ClientGamePacketListener> getUpdatePacket() {
         return ClientboundBlockEntityDataPacket.create(this);
     }
@@ -93,9 +98,9 @@ public class ElectricalConnectorBlockEntity extends BlockEntity implements Botar
     }
 
     protected void serverTick() {
-        if (network == null) 
+        if (network == null)
             setNetwork(new ElectricalNetwork(this));
-        
+
         if (!connectionsInitialized) {
             updateConnections();
             connectionsInitialized = true;
@@ -104,15 +109,15 @@ public class ElectricalConnectorBlockEntity extends BlockEntity implements Botar
 
     @Override
     public boolean addToGoggleTooltip(List<Component> tooltip, boolean isPlayerSneaking) {
-        Lang.translate("tooltip.create_new_age.connector_info")
+        CreateLang.translate("tooltip.create_new_age.connector_info")
                 .style(ChatFormatting.WHITE).forGoggles(tooltip);
-        
-        Lang.translate("tooltip.create_new_age.mode")
+
+        CreateLang.translate("tooltip.create_new_age.mode")
                 .style(ChatFormatting.GRAY)
                 .forGoggles(tooltip);
         
         ElectricalConnectorMode mode = getBlockState().getValue(ElectricalConnectorBlock.MODE);
-        Lang.translate("tooltip.create_new_age.connector_mode." + mode.getSerializedName())
+        CreateLang.translate("tooltip.create_new_age.connector_mode." + mode.getSerializedName())
                 .style(ChatFormatting.AQUA)
                 .forGoggles(tooltip, 1);
         
@@ -151,7 +156,7 @@ public class ElectricalConnectorBlockEntity extends BlockEntity implements Botar
     }
 
     public void connect(ElectricalConnectorBlockEntity entity, WireType wireType) {
-        if (!connectors.containsKey(entity)) 
+        if (!connectors.containsKey(entity))
             connectors.put(entity, wireType);
 
         entity.connectWithoutNetworking(this, wireType);
@@ -164,14 +169,14 @@ public class ElectricalConnectorBlockEntity extends BlockEntity implements Botar
 
         if (level instanceof ServerLevel serverLevel) {
             network.addNode(entity);
-            
+
             serverLevel.getChunkSource().blockChanged(entity.getBlockPos());
             serverLevel.getChunkSource().blockChanged(getBlockPos());
         }
     }
-    
+
     private void connectWithoutNetworking(ElectricalConnectorBlockEntity entity, WireType wireType) {
-        if (!connectors.containsKey(entity)) 
+        if (!connectors.containsKey(entity))
             connectors.put(entity, wireType);
 
         if (!connectorPositions.containsKey(entity.getBlockPos()))
@@ -193,7 +198,11 @@ public class ElectricalConnectorBlockEntity extends BlockEntity implements Botar
 
     public void setNetwork(ElectricalNetwork network) {
         this.network = network;
-        energyContainer.setNetwork(network);
+        if (energyContainer == null) {
+            energyContainer = new NetworkEnergyContainer(this, this.network);
+        } else {
+            energyContainer.setNetwork(this.network);
+        }
     }
 
     public ElectricalNetwork getNetwork() {
@@ -202,6 +211,9 @@ public class ElectricalConnectorBlockEntity extends BlockEntity implements Botar
 
     @Override
     public NetworkEnergyContainer getEnergyStorage() {
+        if (network == null) {
+            setNetwork(new ElectricalNetwork(this));
+        }
         return energyContainer;
     }
 }

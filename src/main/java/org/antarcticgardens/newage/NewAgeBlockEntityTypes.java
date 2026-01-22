@@ -1,10 +1,12 @@
 package org.antarcticgardens.newage;
 
-import com.simibubi.create.content.kinetics.base.CutoutRotatingInstance;
-import com.simibubi.create.content.kinetics.base.HalfShaftInstance;
+import com.simibubi.create.AllPartialModels;
 import com.simibubi.create.content.kinetics.base.KineticBlockEntityRenderer;
-import com.simibubi.create.content.kinetics.base.ShaftInstance;
+import com.simibubi.create.content.kinetics.base.OrientedRotatingVisual;
+import com.simibubi.create.content.kinetics.base.SingleAxisRotatingVisual;
 import com.tterrag.registrate.util.entry.BlockEntityEntry;
+import dev.engine_room.flywheel.lib.model.baked.PartialModel;
+import net.minecraft.resources.ResourceLocation;
 import org.antarcticgardens.newage.content.electricity.connector.ElectricalConnectorBlockEntity;
 import org.antarcticgardens.newage.content.electricity.connector.ElectricalConnectorRenderer;
 import org.antarcticgardens.newage.content.energiser.EnergiserBlockEntity;
@@ -17,7 +19,7 @@ import org.antarcticgardens.newage.content.heat.heatpipe.HeatPipeBlockEntity;
 import org.antarcticgardens.newage.content.heat.heatpump.HeatPumpBlockEntity;
 import org.antarcticgardens.newage.content.heat.solarheatingplate.SolarHeatingPlateBlockEntity;
 import org.antarcticgardens.newage.content.heat.stirlingengine.StirlingEngineBlockEntity;
-import org.antarcticgardens.newage.content.heat.stirlingengine.StirlingEngineInstance;
+import org.antarcticgardens.newage.content.heat.stirlingengine.StirlingEngineVisual;
 import org.antarcticgardens.newage.content.heat.stirlingengine.StirlingEngineRenderer;
 import org.antarcticgardens.newage.content.motors.MotorBlockEntity;
 import org.antarcticgardens.newage.content.motors.extension.MotorExtensionBlockEntity;
@@ -37,28 +39,28 @@ import static org.antarcticgardens.newage.CreateNewAge.REGISTRATE;
 public class NewAgeBlockEntityTypes {
     public static final BlockEntityEntry<EnergiserBlockEntity> ENERGISER_T1 = REGISTRATE
             .blockEntity("energiser_t1", EnergiserBlockEntity::newTier1)
-            .instance(() -> ShaftInstance::new)
+            .visual(() -> SingleAxisRotatingVisual::shaft)
             .validBlocks(NewAgeBlocks.ENERGISER_T1)
             .renderer(() -> EnergiserRenderer::new)
             .register();
 
     public static final BlockEntityEntry<EnergiserBlockEntity> ENERGISER_T2 = REGISTRATE
             .blockEntity("energiser_t2", EnergiserBlockEntity::newTier2)
-            .instance(() -> ShaftInstance::new)
+            .visual(() -> SingleAxisRotatingVisual::shaft)
             .validBlocks(NewAgeBlocks.ENERGISER_T2)
             .renderer(() -> EnergiserRenderer::new)
             .register();
 
     public static final BlockEntityEntry<EnergiserBlockEntity> ENERGISER_T3 = REGISTRATE
             .blockEntity("energiser_t3", EnergiserBlockEntity::newTier3)
-            .instance(() -> ShaftInstance::new)
+            .visual(() -> SingleAxisRotatingVisual::shaft)
             .validBlocks(NewAgeBlocks.ENERGISER_T3)
             .renderer(() -> EnergiserRenderer::new)
             .register();
 
     public static final BlockEntityEntry<CarbonBrushesBlockEntity> CARBON_BRUSHES = REGISTRATE
             .blockEntity("carbon_brushes", CarbonBrushesBlockEntity::new)
-            .instance(() -> ShaftInstance::new)
+            .visual(() -> SingleAxisRotatingVisual::shaft)
             .validBlocks(NewAgeBlocks.CARBON_BRUSHES)
             .renderer(() -> CarbonBrushesRenderer::new)
             .register();
@@ -107,14 +109,14 @@ public class NewAgeBlockEntityTypes {
 
     public static final BlockEntityEntry<GeneratorCoilBlockEntity> GENERATOR_COIL = REGISTRATE
             .blockEntity("generator_coil", GeneratorCoilBlockEntity::new)
-            .instance(() -> CutoutRotatingInstance::new)
+            .visual(() ->  SingleAxisRotatingVisual.of(NewAgePartialModels.GENERATOR_COIL), false)
             .validBlocks(NewAgeBlocks.GENERATOR_COIL)
             .renderer(() -> KineticBlockEntityRenderer::new)
             .register();
 
     public static final BlockEntityEntry<StirlingEngineBlockEntity> STIRLING_ENGINE = REGISTRATE
             .blockEntity("stirling_engine", StirlingEngineBlockEntity::new)
-            .instance(() -> StirlingEngineInstance::new)
+            .visual(() -> StirlingEngineVisual::new)
             .validBlocks(NewAgeBlocks.STIRLING_ENGINE)
             .renderer(() -> StirlingEngineRenderer::new)
             .register();
@@ -122,7 +124,7 @@ public class NewAgeBlockEntityTypes {
 
     public static final BlockEntityEntry<MotorBlockEntity> BASIC_MOTOR = REGISTRATE
             .blockEntity("basic_motor", MotorBlockEntity.create(new BasicMotorVariant()))
-            .instance(() -> HalfShaftInstance::new)
+            .visual(() -> OrientedRotatingVisual.of(AllPartialModels.SHAFT_HALF))
             .validBlocks(NewAgeBlocks.BASIC_MOTOR)
             .renderer(() -> HalfShaftRendererThing::new)
             .register();
@@ -130,7 +132,7 @@ public class NewAgeBlockEntityTypes {
 
     public static final BlockEntityEntry<MotorBlockEntity> ADVANCED_MOTOR = REGISTRATE
             .blockEntity("advanced_motor", MotorBlockEntity.create(new AdvancedMotorVariant()))
-            .instance(() -> HalfShaftInstance::new)
+            .visual(() -> OrientedRotatingVisual.of(AllPartialModels.SHAFT_HALF))
             .validBlocks(NewAgeBlocks.ADVANCED_MOTOR)
             .renderer(() -> HalfShaftRendererThing::new)
             .register();
@@ -138,7 +140,7 @@ public class NewAgeBlockEntityTypes {
 
     public static final BlockEntityEntry<MotorBlockEntity> REINFORCED_MOTOR = REGISTRATE
             .blockEntity("reinforced_motor", MotorBlockEntity.create(new ReinforcedMotorVariant()))
-            .instance(() -> HalfShaftInstance::new)
+            .visual(() -> OrientedRotatingVisual.of(AllPartialModels.SHAFT_HALF))
             .validBlocks(NewAgeBlocks.REINFORCED_MOTOR)
             .renderer(() -> HalfShaftRendererThing::new)
             .register();

@@ -1,6 +1,5 @@
 package org.antarcticgardens.newage.compat.rei;
 
-import com.simibubi.create.compat.rei.ItemIcon;
 import me.shedaniel.math.Point;
 import me.shedaniel.math.Rectangle;
 import me.shedaniel.rei.api.client.gui.Renderer;
@@ -15,6 +14,7 @@ import me.shedaniel.rei.api.common.entry.EntryStack;
 import me.shedaniel.rei.api.common.entry.type.VanillaEntryTypes;
 import me.shedaniel.rei.api.common.util.EntryIngredients;
 import me.shedaniel.rei.api.common.util.EntryStacks;
+import me.shedaniel.rei.forge.REIPluginCommon;
 import net.minecraft.network.chat.Component;
 import net.minecraft.resources.ResourceLocation;
 import net.minecraft.world.Container;
@@ -27,6 +27,7 @@ import org.antarcticgardens.newage.tools.StringFormattingTool;
 import java.util.ArrayList;
 import java.util.List;
 
+@REIPluginCommon
 public class NewAgeReiPlugin implements REIClientPlugin {
     public static CategoryIdentifier<EnergiserDisplay> identifier;
 
@@ -66,7 +67,7 @@ public class NewAgeReiPlugin implements REIClientPlugin {
 
             @Override
             public Renderer getIcon() {
-                return new ItemIcon(NewAgeBlocks.ENERGISER_T2::asStack);
+                return EntryStacks.of(NewAgeBlocks.ENERGISER_T2.asStack());
             }
 
             @Override
@@ -82,7 +83,7 @@ public class NewAgeReiPlugin implements REIClientPlugin {
 
     @Override
     public void registerDisplays(DisplayRegistry registry) {
-        for (Recipe<Container> containerRecipe : registry.getRecipeManager().getAllRecipesFor(EnergisingRecipe.type.getType())) {
+        for (Recipe<Container> containerRecipe : registry.getRecipeManager().getAllRecipesFor(CreateNewAge.ENERGISING_RECIPE_TYPE.getType())) {
             registry.add(new EnergiserDisplay((EnergisingRecipe) containerRecipe));
         }
     }

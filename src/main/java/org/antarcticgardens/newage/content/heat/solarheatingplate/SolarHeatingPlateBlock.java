@@ -1,7 +1,7 @@
 package org.antarcticgardens.newage.content.heat.solarheatingplate;
 
 import com.simibubi.create.content.equipment.wrench.IWrenchable;
-import com.simibubi.create.foundation.utility.Lang;
+import com.simibubi.create.foundation.utility.CreateLang;
 import com.tterrag.registrate.util.entry.BlockEntityEntry;
 import net.minecraft.ChatFormatting;
 import net.minecraft.core.BlockPos;
@@ -65,8 +65,8 @@ public class SolarHeatingPlateBlock extends Block implements EntityBlock, IWrenc
 
     @Override
     public void appendHoverText(ItemStack stack, @Nullable BlockGetter level, List<Component> tooltip, TooltipFlag flag) {
-        tooltip.add(Lang.translate("tooltip.create_new_age.generates").style(ChatFormatting.GRAY)
+        tooltip.add(CreateLang.translate("tooltip.create_new_age.generates").style(ChatFormatting.GRAY)
                 .component());
-        tooltip.add(Lang.text(" ").translate("tooltip.create_new_age.temperature.ps", strength * NewAgeConfig.getCommon().solarPanelHeatMultiplier.get()).style(ChatFormatting.AQUA).component());
+        tooltip.add(CreateLang.text(" ").translate("tooltip.create_new_age.temperature.ps", strength * NewAgeConfig.getCommon().solarPanelHeatMultiplier.get()).style(ChatFormatting.AQUA).component());
     }
 }

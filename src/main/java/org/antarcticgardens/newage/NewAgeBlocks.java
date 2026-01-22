@@ -1,10 +1,12 @@
 package org.antarcticgardens.newage;
 
-import com.simibubi.create.content.kinetics.BlockStressDefaults;
+import com.simibubi.create.api.stress.BlockStressValues;
 import com.simibubi.create.content.processing.AssemblyOperatorBlockItem;
 import com.simibubi.create.foundation.block.connected.SimpleCTBehaviour;
 import com.simibubi.create.foundation.data.CreateRegistrate;
+import com.tterrag.registrate.builders.BlockBuilder;
 import com.tterrag.registrate.util.entry.BlockEntry;
+import com.tterrag.registrate.util.nullness.NonNullUnaryOperator;
 import net.minecraft.client.renderer.RenderType;
 import net.minecraft.world.level.block.Block;
 import net.minecraft.world.level.block.Blocks;
@@ -34,6 +36,8 @@ import org.antarcticgardens.newage.content.reactor.reactorfuelacceptor.ReactorFu
 import org.antarcticgardens.newage.content.reactor.reactorheatvent.ReactorHeatVentBlock;
 import org.antarcticgardens.newage.content.reactor.reactorrod.ReactorRodBlock;
 
+import java.util.LinkedList;
+
 import static org.antarcticgardens.newage.CreateNewAge.REGISTRATE;
 
 public class NewAgeBlocks {
@@ -41,11 +45,28 @@ public class NewAgeBlocks {
         REGISTRATE.defaultCreativeTab(CreateNewAge.CREATIVE_TAB_KEY);
     }
 
+    public static LinkedList<Runnable> doLater = new LinkedList<>();
+
+    public static <B extends Block, P> NonNullUnaryOperator<BlockBuilder<B, P>> setImpact(double value) {
+        return builder -> {
+            doLater.add(() -> BlockStressValues.IMPACTS.register(builder.getEntry(), () -> value));
+            return builder;
+        };
+    }
+
+
+    public static <B extends Block, P> NonNullUnaryOperator<BlockBuilder<B, P>> setCapacity(double value) {
+        return builder -> {
+            doLater.add(() -> BlockStressValues.CAPACITIES.register(builder.getEntry(), () -> value));
+            return builder;
+        };
+    }
+
     public static final BlockEntry<Block> ENERGISER_T1 =
             REGISTRATE.block("energiser_t1", EnergiserBlock::createT1)
                     .properties(BlockBehaviour.Properties::requiresCorrectToolForDrops)
                     .properties(BlockBehaviour.Properties::noOcclusion)
-                    .transform(BlockStressDefaults.setImpact(4.0))
+                    .transform(setImpact(4.0))
                     .item(AssemblyOperatorBlockItem::new)
                     .build()
                     .register();
@@ -54,7 +75,7 @@ public class NewAgeBlocks {
             REGISTRATE.block("energiser_t2", EnergiserBlock::createT2)
                     .properties(BlockBehaviour.Properties::requiresCorrectToolForDrops)
                     .properties(BlockBehaviour.Properties::noOcclusion)
-                    .transform(BlockStressDefaults.setImpact(8.0))
+                    .transform(setImpact(8.0))
                     .item(AssemblyOperatorBlockItem::new)
                     .build()
                     .register();
@@ -63,7 +84,7 @@ public class NewAgeBlocks {
             REGISTRATE.block("energiser_t3", EnergiserBlock::createT3)
                     .properties(BlockBehaviour.Properties::requiresCorrectToolForDrops)
                     .properties(BlockBehaviour.Properties::noOcclusion)
-                    .transform(BlockStressDefaults.setImpact(32.0))
+                    .transform(setImpact(32.0))
                     .item(AssemblyOperatorBlockItem::new)
                     .build()
                     .register();
@@ -130,7 +151,7 @@ public class NewAgeBlocks {
             REGISTRATE.block("generator_coil", GeneratorCoilBlock::new)
                     .properties(BlockBehaviour.Properties::requiresCorrectToolForDrops)
                     .properties(BlockBehaviour.Properties::noOcclusion)
-                    .transform(BlockStressDefaults.setImpact(24.0f))
+                    .transform(setImpact(24.0f))
                     .simpleItem()
                     .register();
 
@@ -198,7 +219,6 @@ public class NewAgeBlocks {
                     .properties(BlockBehaviour.Properties::requiresCorrectToolForDrops)
                     .properties(BlockBehaviour.Properties::noOcclusion)
                     .properties(properties -> properties.strength(2.0f))
-                    .transform(BlockStressDefaults.setCapacity(32.0))
                     .simpleItem()
                     .register();
 

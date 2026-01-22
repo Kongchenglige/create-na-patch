@@ -1,6 +1,8 @@
 {
   "create_new_age.monkey_edition": "Create: New Age [Monkey Edition]",
 
+  "create.tooltip.create_new_age.lag": "Large wire networks are known to cause a lot of lag,\nIt is advised that you use wires from other mods.",
+
   "recipe.assembly.energising": "Energizing",
   "create.tooltip.create_new_age.energy_stored": "Energy Stored: ",
   "create.tooltip.create_new_age.energy_stats": "Energy Stats: ",
@@ -33,7 +35,7 @@
   "create.tooltip.create_new_age.connector_mode.pull": "Pull",
 
 
-  "tab.create_new_age.tab": "Create: New Age",
+  "item_group.create_new_age.tab": "Create: New Age",
   "block.create_new_age.energiser_t1": "Basic Energizer",
   "block.create_new_age.energiser_t2": "Advanced Energizer",
   "block.create_new_age.energiser_t3": "Reinforced Energizer",

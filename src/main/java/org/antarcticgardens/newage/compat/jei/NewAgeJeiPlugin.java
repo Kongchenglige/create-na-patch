@@ -1,6 +1,7 @@
 package org.antarcticgardens.newage.compat.jei;
 
 import mezz.jei.api.IModPlugin;
+import mezz.jei.api.JeiPlugin;
 import mezz.jei.api.recipe.RecipeType;
 import mezz.jei.api.registration.IRecipeCatalystRegistration;
 import mezz.jei.api.registration.IRecipeCategoryRegistration;
@@ -13,6 +14,7 @@ import org.antarcticgardens.newage.content.energiser.EnergisingRecipe;
 
 import static org.antarcticgardens.newage.CreateNewAge.MOD_ID;
 
+@JeiPlugin
 public class NewAgeJeiPlugin implements IModPlugin {
     private EnergisingJeiCategory energising;
     public static RecipeType<EnergisingRecipe> energisingType = new RecipeType<>(new ResourceLocation(MOD_ID, "energising"), EnergisingRecipe.class);
@@ -35,7 +37,7 @@ public class NewAgeJeiPlugin implements IModPlugin {
     public void registerRecipes(IRecipeRegistration registration) {
 
         registration.addRecipes(energisingType,
-                Minecraft.getInstance().level.getRecipeManager().getAllRecipesFor(EnergisingRecipe.type.getType()));
+                Minecraft.getInstance().level.getRecipeManager().getAllRecipesFor(CreateNewAge.ENERGISING_RECIPE_TYPE.getType()));
     }
 
     @Override

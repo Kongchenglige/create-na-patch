@@ -3,7 +3,7 @@
   "acceptMirrored": true,
   "key": {
     "A": {
-      "tag": "c:gold_plates"
+      "tag": "forge:plates/gold"
     },
     "F": {
       "item": "create_new_age:nuclear_fuel"

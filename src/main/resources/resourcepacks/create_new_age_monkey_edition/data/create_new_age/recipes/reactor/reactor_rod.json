@@ -3,7 +3,7 @@
   "acceptMirrored": true,
   "key": {
     "A": {
-      "tag": "c:gold_plates"
+      "tag": "forge:plates/gold"
     },
     "F": {
       "item": "minecraft:iron_block"

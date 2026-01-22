@@ -97,6 +97,7 @@ public class NetworkEnergyContainer implements EnergyContainer, Updatable<BlockE
         return new CompoundTag();
     }
 
+    
     @Override
     public void update(BlockEntity be) {
         be.setChanged();

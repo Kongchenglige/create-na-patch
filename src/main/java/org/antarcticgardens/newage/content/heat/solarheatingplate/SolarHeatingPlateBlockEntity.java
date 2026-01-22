@@ -1,9 +1,10 @@
 package org.antarcticgardens.newage.content.heat.solarheatingplate;
 
-import com.simibubi.create.content.equipment.goggles.IHaveGoggleInformation;
-import com.simibubi.create.foundation.utility.Lang;
+import com.simibubi.create.api.equipment.goggles.IHaveGoggleInformation;
+import com.simibubi.create.foundation.utility.CreateLang;
 import net.minecraft.ChatFormatting;
 import net.minecraft.core.BlockPos;
+import net.minecraft.core.Direction;
 import net.minecraft.nbt.CompoundTag;
 import net.minecraft.network.chat.Component;
 import net.minecraft.network.protocol.Packet;
@@ -57,6 +58,11 @@ public class SolarHeatingPlateBlockEntity extends BlockEntity implements HeatBlo
 
 
     @Override
+    public boolean canConnect(Direction from) {
+        return from != Direction.DOWN;
+    }
+
+    @Override
     public float getHeat() {
         return heat;
     }
@@ -88,9 +94,9 @@ public class SolarHeatingPlateBlockEntity extends BlockEntity implements HeatBlo
     public boolean addToGoggleTooltip(List<Component> tooltip, boolean isPlayerSneaking) {
         HeatBlockEntity.addToolTips(this, tooltip);
 
-        Lang.translate("tooltip.create_new_age.generating")
+        CreateLang.translate("tooltip.create_new_age.generating")
                 .style(ChatFormatting.GRAY).forGoggles(tooltip, 1);
-        Lang.translate("tooltip.create_new_age.temperature.ps", StringFormattingTool.formatFloat(last))
+        CreateLang.translate("tooltip.create_new_age.temperature.ps", StringFormattingTool.formatFloat(last))
                 .style(ChatFormatting.AQUA).forGoggles(tooltip, 2);
 
         return true;

@@ -1,17 +1,12 @@
-package org.antarcticgardens.newage.compat.rei;
+package org.antarcticgardens.newage.compat;
 
 import com.mojang.blaze3d.vertex.PoseStack;
 import com.mojang.math.Axis;
+import com.simibubi.create.compat.jei.category.animations.AnimatedKinetics;
 import com.simibubi.create.AllBlocks;
-import com.simibubi.create.compat.rei.category.animations.AnimatedKinetics;
 import net.minecraft.client.gui.GuiGraphics;
-import net.minecraft.client.gui.components.events.GuiEventListener;
 import net.minecraft.core.Direction;
 import org.antarcticgardens.newage.NewAgeBlocks;
-import org.jetbrains.annotations.NotNull;
-
-import java.util.ArrayList;
-import java.util.List;
 
 public class NotAnimatedEnergiser extends AnimatedKinetics {
 
@@ -38,15 +33,5 @@ public class NotAnimatedEnergiser extends AnimatedKinetics {
                 .render(graphics);
 
         matrixStack.popPose();
-    }
-
-    @Override
-    public void render(@NotNull GuiGraphics graphics, int mouseX, int mouseY, float partialTick) {
-        draw(graphics, getPos().getX(), getPos().getY());
-    }
-
-    @Override
-    public @NotNull List<? extends GuiEventListener> children() {
-        return new ArrayList<>();
     }
 }

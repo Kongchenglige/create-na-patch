@@ -1,9 +1,9 @@
 package org.antarcticgardens.newage.content.generation.carbonbrushes;
 
-import com.simibubi.create.content.equipment.goggles.IHaveGoggleInformation;
+import com.simibubi.create.api.equipment.goggles.IHaveGoggleInformation;
 import com.simibubi.create.content.kinetics.base.DirectionalKineticBlock;
 import com.simibubi.create.content.kinetics.base.KineticBlockEntity;
-import com.simibubi.create.foundation.utility.Lang;
+import com.simibubi.create.foundation.utility.CreateLang;
 import earth.terrarium.botarium.common.energy.base.BotariumEnergyBlock;
 import net.minecraft.ChatFormatting;
 import net.minecraft.core.BlockPos;
@@ -22,15 +22,12 @@ import org.antarcticgardens.newage.tools.StringFormattingTool;
 import java.util.List;
 
 public class CarbonBrushesBlockEntity extends KineticBlockEntity implements BotariumEnergyBlock<ExtractOnlyResizableEnergyContainer>, IHaveGoggleInformation {
-    private final ExtractOnlyResizableEnergyContainer energyContainer;
+    private ExtractOnlyResizableEnergyContainer energyContainer;
 
     private int lastOutput = 0;
 
     public CarbonBrushesBlockEntity(BlockEntityType<?> type, BlockPos pos, BlockState state) {
         super(type, pos, state);
-
-        energyContainer = new ExtractOnlyResizableEnergyContainer(0);
-
         setLazyTickRate(20);
     }
 
@@ -48,14 +45,14 @@ public class CarbonBrushesBlockEntity extends KineticBlockEntity implements Bota
 
     @Override
     public boolean addToGoggleTooltip(List<Component> tooltip, boolean isPlayerSneaking) {
-        Lang.translate("tooltip.create_new_age.energy_stats")
+        CreateLang.translate("tooltip.create_new_age.energy_stats")
                 .style(ChatFormatting.WHITE).forGoggles(tooltip);
 
-        Lang.translate("tooltip.create_new_age.energy_output")
+        CreateLang.translate("tooltip.create_new_age.energy_output")
                 .style(ChatFormatting.GRAY)
                 .forGoggles(tooltip);
 
-        Lang.translate("tooltip.create_new_age.energy_per_tick", StringFormattingTool.formatLong(lastOutput))
+        CreateLang.translate("tooltip.create_new_age.energy_per_tick", StringFormattingTool.formatLong(lastOutput))
                 .style(ChatFormatting.AQUA)
                 .forGoggles(tooltip, 1);
 
@@ -70,14 +67,14 @@ public class CarbonBrushesBlockEntity extends KineticBlockEntity implements Bota
         if (level == null || level.isClientSide) return;
         Direction facing = getBlockState().getValue(DirectionalKineticBlock.FACING);
 
-        energyContainer.setMaxCapacity(lastOutput * 20L);
+        getEnergyStorage().setMaxCapacity(lastOutput * 20L);
 
         int coilsLeft = NewAgeConfig.getCommon().maxCoils.get();
         lastOutput = 0;
         coilsLeft = processCoil(worldPosition, facing, coilsLeft);
         processCoil(worldPosition, facing.getOpposite(), coilsLeft);
 
-        EnergyHooks.distributeEnergyNearby(this);
+        EnergyHooks.distributeEnergyNearby(this, getEnergyStorage().getStoredEnergy());
     }
 
     @Override
@@ -100,7 +97,8 @@ public class CarbonBrushesBlockEntity extends KineticBlockEntity implements Bota
             int energy = coil.takeGeneratedEnergy();
             lastOutput += energy;
             syncOut += energy;
-            energyContainer.internalInsert(energy, false);
+
+            getEnergyStorage().internalInsert(energy, false);
             return processCoil(pos, dir, left-1);
         }
         return left;
@@ -108,6 +106,9 @@ public class CarbonBrushesBlockEntity extends KineticBlockEntity implements Bota
 
     @Override
     public ExtractOnlyResizableEnergyContainer getEnergyStorage() {
+        if (energyContainer == null)
+            energyContainer = new ExtractOnlyResizableEnergyContainer(0);
+
         return energyContainer;
     }
 }

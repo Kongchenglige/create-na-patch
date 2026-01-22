@@ -1,7 +1,7 @@
 package org.antarcticgardens.newage.content.heat;
 
-import com.simibubi.create.foundation.utility.Lang;
-import com.simibubi.create.foundation.utility.LangBuilder;
+import com.simibubi.create.foundation.utility.CreateLang;
+import net.createmod.catnip.lang.LangBuilder;
 import net.minecraft.ChatFormatting;
 import net.minecraft.core.Direction;
 import net.minecraft.network.chat.Component;
@@ -50,7 +50,7 @@ public interface HeatBlockEntity {
     }
 
     static <T extends  BlockEntity & HeatBlockEntity> void addToolTips(T self, List<Component> tooltip) {
-        LangBuilder builder = Lang.translate("tooltip.create_new_age.temperature", StringFormattingTool.formatFloat(self.getHeat()));
+        LangBuilder builder = CreateLang.translate("tooltip.create_new_age.temperature", StringFormattingTool.formatFloat(self.getHeat()));
         float max = self.maxHeat() * (float)(double)NewAgeConfig.getCommon().overheatingMultiplier.get();
         if (max < 0) {
             builder.style(ChatFormatting.AQUA);
@@ -67,8 +67,8 @@ public interface HeatBlockEntity {
         }
 
 
-        builder.add(Lang.text(" / ")
-                .add(Lang.translate("tooltip.create_new_age.temperature", max > 0 ? StringFormattingTool.formatFloat(max) : "∞")).style(ChatFormatting.DARK_GRAY)
+        builder.add(CreateLang.text(" / ")
+                .add(CreateLang.translate("tooltip.create_new_age.temperature", max > 0 ? StringFormattingTool.formatFloat(max) : "∞")).style(ChatFormatting.DARK_GRAY)
         );
 
         builder.forGoggles(tooltip, 1);
@@ -87,11 +87,11 @@ public interface HeatBlockEntity {
                 next = tiers[i + 1] * mult;
             }
             if (tis <= tierHeat && next > tierHeat) {
-                builder = Lang.text("> ").add(Lang.translate("tooltip.create_new_age.temperature", StringFormattingTool.formatFloat(tis)));
+                builder = CreateLang.text("> ").add(CreateLang.translate("tooltip.create_new_age.temperature", StringFormattingTool.formatFloat(tis)));
                 builder.style(ChatFormatting.GRAY);
                 builder.forGoggles(tooltip, 0);
             } else {
-                builder = Lang.text("").add(Lang.translate("tooltip.create_new_age.temperature", StringFormattingTool.formatFloat(tis)));
+                builder = CreateLang.text("").add(CreateLang.translate("tooltip.create_new_age.temperature", StringFormattingTool.formatFloat(tis)));
                 builder.style(ChatFormatting.DARK_GRAY);
                 builder.forGoggles(tooltip, 2);
             }
@@ -105,8 +105,11 @@ public interface HeatBlockEntity {
         }
 
         double multiplier = NewAgeConfig.getCommon().overheatingMultiplier.get();
-        if (multiplier > 0 && self.getHeat() > self.maxHeat() * NewAgeConfig.getCommon().overheatingMultiplier.get()) {
-            onOverHeat.run();
+        if (multiplier > 0 && self.getHeat() > self.maxHeat() * NewAgeConfig.getCommon().overheatingMultiplier.get() * 0.7f) {
+            self.setHeat(Math.max(self.getHeat()-5, 0));
+            if (self.getHeat() > self.maxHeat() * NewAgeConfig.getCommon().overheatingMultiplier.get()) {
+                onOverHeat.run();
+            }
         }
     }
 
@@ -124,7 +127,7 @@ public interface HeatBlockEntity {
         for (int i = 0 ; i < 6 ; i++) {
             Direction value = Direction.values()[i];
             BlockEntity entity = self.getLevel().getBlockEntity(self.getBlockPos().relative(value));
-            if (entity instanceof HeatBlockEntity hbe && hbe.canAdd(value)) {
+            if (entity instanceof HeatBlockEntity hbe && hbe.canAdd(value) && self.canAdd(value.getOpposite())) {
                 setters[i] = hbe;
                 totalToAverage += hbe.getHeat();
                 totalBlocks++;

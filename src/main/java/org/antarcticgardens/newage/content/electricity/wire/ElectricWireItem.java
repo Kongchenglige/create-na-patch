@@ -1,6 +1,6 @@
 package org.antarcticgardens.newage.content.electricity.wire;
 
-import com.simibubi.create.foundation.utility.Lang;
+import com.simibubi.create.foundation.utility.CreateLang;
 import net.minecraft.ChatFormatting;
 import net.minecraft.core.BlockPos;
 import net.minecraft.nbt.CompoundTag;
@@ -160,8 +160,10 @@ public class ElectricWireItem extends Item {
 
     @Override
     public void appendHoverText(ItemStack stack, @Nullable Level level, List<Component> tooltip, TooltipFlag flag) {
-        tooltip.add(Lang.translate("tooltip.create_new_age.transfers").style(ChatFormatting.GRAY)
+        tooltip.add(CreateLang.translate("tooltip.create_new_age.lag").style(ChatFormatting.GRAY)
                 .component());
-        tooltip.add(Lang.text(" ").translate("tooltip.create_new_age.energy_per_tick", String.format("%,d", wireType.getConductivity())).style(ChatFormatting.AQUA).component());
+        tooltip.add(CreateLang.translate("tooltip.create_new_age.transfers").style(ChatFormatting.GRAY)
+                .component());
+        tooltip.add(CreateLang.text(" ").translate("tooltip.create_new_age.energy_per_tick", String.format("%,d", wireType.getConductivity())).style(ChatFormatting.AQUA).component());
     }
 }

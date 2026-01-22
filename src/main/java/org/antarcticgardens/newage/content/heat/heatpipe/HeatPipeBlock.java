@@ -1,5 +1,6 @@
 package org.antarcticgardens.newage.content.heat.heatpipe;
 
+import com.simibubi.create.api.boiler.BoilerHeater;
 import com.simibubi.create.content.equipment.wrench.IWrenchable;
 import com.simibubi.create.content.fluids.tank.BoilerHeaters;
 import net.minecraft.core.BlockPos;
@@ -148,7 +149,7 @@ public class HeatPipeBlock extends Block implements EntityBlock, IWrenchable {
 
             BlockPos heatPos = blockPos.below();
 
-            float heat = BoilerHeaters.getActiveHeat(level, blockPos, level.getBlockState(heatPos));
+            float heat = BoilerHeater.findHeat(level, blockPos, level.getBlockState(heatPos));
 
             selfC.generating = 0;
 

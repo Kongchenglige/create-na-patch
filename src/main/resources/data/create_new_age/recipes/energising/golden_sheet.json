@@ -3,7 +3,7 @@
   "energy_needed": 2000,
   "ingredients": [
     {
-      "tag": "c:gold_plates"
+      "tag": "forge:plates/gold"
     }
   ],
   "results": [

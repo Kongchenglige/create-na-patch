@@ -1,34 +1,14 @@
 package org.antarcticgardens.newage.content.electricity.network;
 
-import net.fabricmc.fabric.api.transfer.v1.transaction.Transaction;
 import net.minecraft.world.level.block.entity.BlockEntity;
-import team.reborn.energy.api.EnergyStorage;
+import net.minecraftforge.energy.IEnergyStorage;
 
-@SuppressWarnings("UnstableApiUsage")
-public record EnergyStorageWrapper(BlockEntity entity, EnergyStorage storage) {
+public record EnergyStorageWrapper(BlockEntity entity, IEnergyStorage storage) {
     public long insert(long maxAmount, boolean simulate) {
-        try (Transaction txn = Transaction.openNested(Transaction.getCurrentUnsafe())) {
-            long inserted = storage.insert(maxAmount, txn);
-
-            if (simulate)
-                txn.abort();
-            else
-                txn.commit();
-
-            return inserted;
-        }
+        return storage.receiveEnergy((int) Math.min(Math.max(maxAmount, Integer.MIN_VALUE), Integer.MAX_VALUE), simulate);
     }
     
     public long extract(long maxAmount, boolean simulate) {
-        try (Transaction txn = Transaction.openNested(Transaction.getCurrentUnsafe())) {
-            long inserted = storage.extract(maxAmount, txn);
-
-            if (simulate)
-                txn.abort();
-            else
-                txn.commit();
-
-            return inserted;
-        }
+        return storage.extractEnergy((int) Math.min(Math.max(maxAmount, Integer.MIN_VALUE), Integer.MAX_VALUE), simulate);
     }
 }

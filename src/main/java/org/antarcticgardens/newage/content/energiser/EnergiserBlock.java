@@ -3,7 +3,7 @@ package org.antarcticgardens.newage.content.energiser;
 import com.simibubi.create.AllShapes;
 import com.simibubi.create.content.kinetics.base.HorizontalKineticBlock;
 import com.simibubi.create.foundation.block.IBE;
-import com.simibubi.create.foundation.utility.Lang;
+import com.simibubi.create.foundation.utility.CreateLang;
 import com.tterrag.registrate.util.entry.BlockEntityEntry;
 import net.minecraft.ChatFormatting;
 import net.minecraft.core.BlockPos;
@@ -87,12 +87,12 @@ public class EnergiserBlock extends HorizontalKineticBlock implements IBE<Energi
 
     @Override
     public void appendHoverText(ItemStack stack, @Nullable BlockGetter level, List<Component> tooltip, TooltipFlag flag) {
-        tooltip.add(Lang.translate("tooltip.create_new_age.speed").style(ChatFormatting.GRAY).component());
-        tooltip.add(Lang.text(" ").translate("tooltip.create_new_age.energy_per_tick", StringFormattingTool.formatLong(getStrength(tier))).style(ChatFormatting.AQUA)
-                        .add(Lang.text(" ").translate("tooltip.create_new_age.per_rpm", 10).style(ChatFormatting.GRAY))
+        tooltip.add(CreateLang.translate("tooltip.create_new_age.speed").style(ChatFormatting.GRAY).component());
+        tooltip.add(CreateLang.text(" ").translate("tooltip.create_new_age.energy_per_tick", StringFormattingTool.formatLong(getStrength(tier))).style(ChatFormatting.AQUA)
+                        .add(CreateLang.text(" ").translate("tooltip.create_new_age.per_rpm", 10).style(ChatFormatting.GRAY))
                 .component());
-        tooltip.add(Lang.translate("tooltip.create_new_age.stores").style(ChatFormatting.GRAY).component());
-        tooltip.add(Lang.text(" ").translate("tooltip.create_new_age.energy", StringFormattingTool.formatLong(getCapacity(tier))).style(ChatFormatting.AQUA)
+        tooltip.add(CreateLang.translate("tooltip.create_new_age.stores").style(ChatFormatting.GRAY).component());
+        tooltip.add(CreateLang.text(" ").translate("tooltip.create_new_age.energy", StringFormattingTool.formatLong(getCapacity(tier))).style(ChatFormatting.AQUA)
                 .component());
     }
 

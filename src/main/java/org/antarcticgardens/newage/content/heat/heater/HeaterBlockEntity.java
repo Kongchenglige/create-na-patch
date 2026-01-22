@@ -1,10 +1,11 @@
 package org.antarcticgardens.newage.content.heat.heater;
 
-import com.simibubi.create.content.equipment.goggles.IHaveGoggleInformation;
+import com.simibubi.create.api.equipment.goggles.IHaveGoggleInformation;
 import com.simibubi.create.content.processing.burner.BlazeBurnerBlock;
-import com.simibubi.create.foundation.utility.Lang;
+import com.simibubi.create.foundation.utility.CreateLang;
 import net.minecraft.ChatFormatting;
 import net.minecraft.core.BlockPos;
+import net.minecraft.core.Direction;
 import net.minecraft.nbt.CompoundTag;
 import net.minecraft.network.chat.Component;
 import net.minecraft.network.protocol.Packet;
@@ -39,6 +40,11 @@ public class HeaterBlockEntity extends BlockEntity implements HeatBlockEntity, I
         tag.putFloat("heat", heat);
     }
 
+
+    @Override
+    public boolean canConnect(Direction from) {
+        return from != Direction.DOWN;
+    }
 
     @Override
     public float getHeat() {
@@ -136,9 +142,9 @@ public class HeaterBlockEntity extends BlockEntity implements HeatBlockEntity, I
             }
         }
 
-        Lang.translate("tooltip.create_new_age.releasing")
+        CreateLang.translate("tooltip.create_new_age.releasing")
                 .style(ChatFormatting.GRAY).forGoggles(tooltip, 1);
-        Lang.translate("tooltip.create_new_age.temperature.ps", StringFormattingTool.formatFloat((float)heat))
+        CreateLang.translate("tooltip.create_new_age.temperature.ps", StringFormattingTool.formatFloat((float)heat))
                 .style(ChatFormatting.AQUA).forGoggles(tooltip, 2);
         return true;
     }

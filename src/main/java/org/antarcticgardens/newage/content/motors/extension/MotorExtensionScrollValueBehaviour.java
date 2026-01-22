@@ -6,8 +6,7 @@ import com.simibubi.create.foundation.blockEntity.behaviour.ValueBoxTransform;
 import com.simibubi.create.foundation.blockEntity.behaviour.ValueSettingsBoard;
 import com.simibubi.create.foundation.blockEntity.behaviour.ValueSettingsFormatter;
 import com.simibubi.create.foundation.blockEntity.behaviour.scrollValue.ScrollValueBehaviour;
-import com.simibubi.create.foundation.utility.Components;
-import com.simibubi.create.foundation.utility.Lang;
+import com.simibubi.create.foundation.utility.CreateLang;
 import net.minecraft.ChatFormatting;
 import net.minecraft.network.chat.Component;
 import net.minecraft.network.chat.MutableComponent;
@@ -25,7 +24,7 @@ public class MotorExtensionScrollValueBehaviour extends ScrollValueBehaviour {
 
     @Override
     public ValueSettingsBoard createBoard(Player player, BlockHitResult hitResult) {
-        ImmutableList<Component> rows = ImmutableList.of(Components.literal("%")
+        ImmutableList<Component> rows = ImmutableList.of(Component.literal("%")
                         .withStyle(ChatFormatting.BOLD));
         ValueSettingsFormatter formatter = new ValueSettingsFormatter(this::formatSettings);
         value /= step;
@@ -46,8 +45,8 @@ public class MotorExtensionScrollValueBehaviour extends ScrollValueBehaviour {
     }
 
     public MutableComponent formatSettings(ValueSettings settings) {
-        return Lang.number(Math.max(1, Math.abs(settings.value() * step)))
-                .add(Lang.text("%")
+        return CreateLang.number(Math.max(1, Math.abs(settings.value() * step)))
+                .add(CreateLang.text("%")
                         .style(ChatFormatting.BOLD))
                 .component();
     }

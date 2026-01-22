@@ -3,7 +3,7 @@ package org.antarcticgardens.newage.content.motors.extension;
 
 import com.simibubi.create.content.equipment.wrench.IWrenchable;
 import com.simibubi.create.foundation.block.IBE;
-import com.simibubi.create.foundation.utility.Lang;
+import com.simibubi.create.foundation.utility.CreateLang;
 import com.tterrag.registrate.util.entry.BlockEntityEntry;
 import net.minecraft.ChatFormatting;
 import net.minecraft.core.BlockPos;
@@ -35,9 +35,12 @@ import java.util.List;
 import static org.antarcticgardens.newage.content.reactor.reactorfuelacceptor.ReactorFuelAcceptorBlock.FACING;
 
 public class MotorExtensionBlock extends Block implements IBE<MotorExtensionBlockEntity>, IWrenchable {
-    protected static final VoxelShape Y_AXIS_AABB = Block.box(2.0, 0.0, 2.0, 14.0, 16.0, 14.0);
-    protected static final VoxelShape Z_AXIS_AABB = Block.box(2.0, 2.0, 0.0, 14.0, 14.0, 16.0);
-    protected static final VoxelShape X_AXIS_AABB = Block.box(0.0, 2.0, 2.0, 16.0, 14.0, 14.0);
+    protected static final VoxelShape DOWN_AABB = Block.box(2.0, 0.0, 2.0, 14.0, 12.0, 14.0);
+    protected static final VoxelShape UP_AABB = Block.box(2.0, 4.0, 2.0, 14.0, 16.0, 14.0);
+    protected static final VoxelShape NORTH_AABB = Block.box(2.0, 2.0, 0.0, 14.0, 14.0, 12.0);
+    protected static final VoxelShape SOUTH_AABB = Block.box(2.0, 2.0, 4.0, 14.0, 14.0, 16.0);
+    protected static final VoxelShape WEST_AABB = Block.box(0.0, 2.0, 2.0, 12.0, 14.0, 14.0);
+    protected static final VoxelShape EAST_AABB = Block.box(4.0, 2.0, 2.0, 16.0, 14.0, 14.0);
     private final BlockEntityEntry<MotorExtensionBlockEntity> entry;
     private final IMotorExtensionVariant variant;
 
@@ -55,13 +58,13 @@ public class MotorExtensionBlock extends Block implements IBE<MotorExtensionBloc
     @Override
     public void appendHoverText(ItemStack stack, @Nullable BlockGetter level, List<Component> tooltip, TooltipFlag flag) {
         tooltip.add(Component.translatable("tooltip.create_new_age.motor_extension").withStyle(ChatFormatting.DARK_GRAY));
-        tooltip.add(Lang.translate("tooltip.create_new_age.stress_limit_multiplier").style(ChatFormatting.GRAY)
+        tooltip.add(CreateLang.translate("tooltip.create_new_age.stress_limit_multiplier").style(ChatFormatting.GRAY)
                 .component());
-        tooltip.add(Lang.text(" ").add(Lang.number((int)(variant.getMultiplier() * 100)).text("%").style(ChatFormatting.AQUA)).component());
+        tooltip.add(CreateLang.text(" ").add(CreateLang.number((int)(variant.getMultiplier() * 100)).text("%").style(ChatFormatting.AQUA)).component());
 
-        tooltip.add(Lang.translate("tooltip.create_new_age.additional_capacity").style(ChatFormatting.GRAY)
+        tooltip.add(CreateLang.translate("tooltip.create_new_age.additional_capacity").style(ChatFormatting.GRAY)
                 .component());
-        tooltip.add(Lang.text(" ").add(Lang.number(variant.getExtraCapacity()).text("⚡").style(ChatFormatting.AQUA)).component());
+        tooltip.add(CreateLang.text(" ").add(CreateLang.number(variant.getExtraCapacity()).text("⚡").style(ChatFormatting.AQUA)).component());
     }
 
     @Nullable
@@ -116,10 +119,13 @@ public class MotorExtensionBlock extends Block implements IBE<MotorExtensionBloc
     }
 
     public VoxelShape getShape(BlockState arg, BlockGetter arg2, BlockPos arg3, CollisionContext arg4) {
-        return switch ((arg.getValue(FACING)).getAxis()) {
-            case X -> X_AXIS_AABB;
-            case Z -> Z_AXIS_AABB;
-            case Y -> Y_AXIS_AABB;
+        return switch (arg.getValue(FACING)) {
+            case DOWN -> DOWN_AABB;
+            case UP -> UP_AABB;
+            case NORTH -> NORTH_AABB;
+            case SOUTH -> SOUTH_AABB;
+            case WEST -> WEST_AABB;
+            case EAST -> EAST_AABB;
         };
     }
 

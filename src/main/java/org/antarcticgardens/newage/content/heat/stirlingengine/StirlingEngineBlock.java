@@ -1,5 +1,6 @@
 package org.antarcticgardens.newage.content.heat.stirlingengine;
 
+import com.simibubi.create.content.equipment.wrench.IWrenchable;
 import com.simibubi.create.content.kinetics.base.GeneratingKineticBlockEntity;
 import com.simibubi.create.content.kinetics.base.KineticBlockEntity;
 import com.simibubi.create.content.kinetics.base.RotatedPillarKineticBlock;
@@ -55,7 +56,7 @@ public class StirlingEngineBlock extends RotatedPillarKineticBlock implements IB
         }
 
         if (world.getBlockState(context.getClickedPos()) != state)
-            playRotateSound(world, context.getClickedPos());
+            IWrenchable.playRotateSound(world, context.getClickedPos());
 
         return InteractionResult.SUCCESS;
     }

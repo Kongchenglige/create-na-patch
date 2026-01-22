@@ -57,7 +57,7 @@ public class CommonConfig {
 
         maxPathfindingDepth = builder
                 .comment("Maximum depth of network pathfinding")
-                .defineInRange("maxPathfindingDepth", 32, 1, Integer.MAX_VALUE);
+                .defineInRange("maxPathfindingDepth", 24, 1, Integer.MAX_VALUE);
 
         energiserSpeedMultiplier = builder
                 .comment("Multiplier of energising speed")

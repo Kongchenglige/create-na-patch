@@ -6,9 +6,9 @@ import org.antarcticgardens.newage.config.NewAgeConfig;
 
 public enum WireType {
     COPPER(1024, new int[] { 158, 88, 75, 255 }, new int[] { 173, 108, 92, 255 }, NewAgeItems.COPPER_WIRE::asStack),
-    IRON(2048, new int[] { 210, 213, 216, 255 }, new int[] { 253, 254, 254, 255 }, NewAgeItems.IRON_WIRE::asStack),
-    GOLD(4096, new int[] { 244, 184, 28, 255 }, new int[] { 254, 240, 90, 255 }, NewAgeItems.GOLDEN_WIRE::asStack),
-    DIAMOND(8192, new int[] { 45, 196, 178, 255 }, new int[] { 107, 243, 227, 255 }, NewAgeItems.DIAMOND_WIRE::asStack);
+    IRON(2048, new int[] { 177, 179, 181, 255 }, new int[] { 164, 165, 166, 255 }, NewAgeItems.IRON_WIRE::asStack),
+    GOLD(4096, new int[] { 186, 155, 74, 255 }, new int[] { 171, 141, 63, 255 }, NewAgeItems.GOLDEN_WIRE::asStack),
+    DIAMOND(8192, new int[] { 86, 145, 138, 255 }, new int[] { 77, 127, 120, 255 }, NewAgeItems.DIAMOND_WIRE::asStack);
 
     private final long conductivity;
     private final int[] color1;

@@ -1,13 +1,12 @@
 package org.antarcticgardens.newage.content.heat.stirlingengine;
 
-import com.jozufozu.flywheel.backend.Backend;
 import com.mojang.blaze3d.vertex.PoseStack;
 import com.mojang.blaze3d.vertex.VertexConsumer;
 import com.simibubi.create.AllBlocks;
 import com.simibubi.create.content.kinetics.base.KineticBlockEntityRenderer;
-import com.simibubi.create.foundation.render.CachedBufferer;
-import com.simibubi.create.foundation.render.SuperByteBuffer;
-import com.simibubi.create.foundation.utility.AngleHelper;
+import net.createmod.catnip.math.AngleHelper;
+import net.createmod.catnip.render.CachedBuffers;
+import net.createmod.catnip.render.SuperByteBuffer;
 import net.minecraft.client.renderer.MultiBufferSource;
 import net.minecraft.client.renderer.RenderType;
 import net.minecraft.client.renderer.blockentity.BlockEntityRendererProvider;
@@ -25,8 +24,8 @@ public class StirlingEngineRenderer extends KineticBlockEntityRenderer<StirlingE
                               int light, int overlay) {
         super.renderSafe(be, partialTicks, ms, buffer, light, overlay);
 
-        if (Backend.canUseInstancing(be.getLevel()))
-            return;
+//        if (Backend.canUseInstancing(be.getLevel()))
+//            return;
 
         BlockState blockState = AllBlocks.FLYWHEEL.getDefaultState().setValue(BlockStateProperties.AXIS,
                 be.getBlockState().getValue(BlockStateProperties.AXIS)
@@ -41,7 +40,7 @@ public class StirlingEngineRenderer extends KineticBlockEntityRenderer<StirlingE
 
     private void renderFlywheel(StirlingEngineBlockEntity be, PoseStack ms, int light, BlockState blockState, float angle,
                                 VertexConsumer vb) {
-        SuperByteBuffer wheel = CachedBufferer.block(blockState).centre().scale(0.2f, 0.2f, 0.2f).unCentre();
+        SuperByteBuffer wheel = CachedBuffers.block(blockState).center().scale(0.2f, 0.2f, 0.2f).uncenter();
         kineticRotationTransform(wheel, be, getRotationAxisOf(be), AngleHelper.rad(angle), light);
         wheel.renderInto(ms, vb);
     }

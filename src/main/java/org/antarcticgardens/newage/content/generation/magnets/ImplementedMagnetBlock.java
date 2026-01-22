@@ -1,6 +1,6 @@
 package org.antarcticgardens.newage.content.generation.magnets;
 
-import com.simibubi.create.foundation.utility.Lang;
+import com.simibubi.create.foundation.utility.CreateLang;
 import com.tterrag.registrate.util.nullness.NonNullFunction;
 import net.minecraft.ChatFormatting;
 import net.minecraft.network.chat.Component;
@@ -23,8 +23,8 @@ public class ImplementedMagnetBlock extends Block implements IMagneticBlock {
 
     @Override
     public void appendHoverText(@NotNull ItemStack stack, @Nullable BlockGetter level, List<Component> tooltip, TooltipFlag flag) {
-        tooltip.add(Lang.translate("tooltip.create_new_age.magnetic_force").style(ChatFormatting.GRAY).component());
-        tooltip.add(Lang.text(" " + strength).style(ChatFormatting.AQUA)
+        tooltip.add(CreateLang.translate("tooltip.create_new_age.magnetic_force").style(ChatFormatting.GRAY).component());
+        tooltip.add(CreateLang.text(" " + strength).style(ChatFormatting.AQUA)
                 .component());
     }
 

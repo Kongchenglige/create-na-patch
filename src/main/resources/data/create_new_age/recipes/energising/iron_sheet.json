@@ -3,7 +3,7 @@
   "energy_needed": 1000,
   "ingredients": [
     {
-      "tag": "c:iron_plates"
+      "tag": "forge:plates/iron"
     }
   ],
   "results": [

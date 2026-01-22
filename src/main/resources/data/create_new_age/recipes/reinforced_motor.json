@@ -18,7 +18,7 @@
       "item": "create:brass_casing"
     },
     "I": {
-      "tag": "c:iron_plates"
+      "tag": "forge:plates/iron"
     }
   },
   "pattern": [

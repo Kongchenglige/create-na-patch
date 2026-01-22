@@ -141,6 +141,10 @@ public class ElectricalConnectorRenderer implements BlockEntityRenderer<Electric
         int sections = (int) Math.ceil(distance * NewAgeConfig.getClient().wireSectionsPerMeter.get());
         float perSection = distance / sections;
 
+        if (sections > 128_000) {
+            return;
+        }
+
         for (int i = 0; i <= sections; i++) {
             int[] color = (i % 2 == 0) ? color1 : color2;
             Vector3f sectionTo = new Vector3f(direction).mul(perSection * i).add(0.0f, catenary(i, distance, sections), 0.0f);

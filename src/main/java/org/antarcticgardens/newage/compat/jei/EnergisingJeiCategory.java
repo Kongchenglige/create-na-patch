@@ -23,6 +23,7 @@ import java.util.Collections;
 
 import static com.simibubi.create.compat.jei.category.CreateRecipeCategory.getRenderedSlot;
 
+
 public class EnergisingJeiCategory implements IRecipeCategory<EnergisingRecipe> {
 
     @Override

@@ -1,8 +1,8 @@
 package org.antarcticgardens.newage.content.heat.stirlingengine;
 
 import com.simibubi.create.content.kinetics.base.GeneratingKineticBlockEntity;
-import com.simibubi.create.foundation.utility.Lang;
-import com.simibubi.create.foundation.utility.animation.LerpedFloat;
+import com.simibubi.create.foundation.utility.CreateLang;
+import net.createmod.catnip.animation.LerpedFloat;
 import net.minecraft.ChatFormatting;
 import net.minecraft.core.BlockPos;
 import net.minecraft.core.Direction;
@@ -51,9 +51,9 @@ public class StirlingEngineBlockEntity extends GeneratingKineticBlockEntity impl
     public boolean addToGoggleTooltip(List<Component> tooltip, boolean isPlayerSneaking) {
         HeatBlockEntity.addToolTips(this, tooltip);
 
-        Lang.translate("tooltip.create_new_age.using")
+        CreateLang.translate("tooltip.create_new_age.using")
                 .style(ChatFormatting.GRAY).forGoggles(tooltip, 1);
-        Lang.translate("tooltip.create_new_age.temperature.ps", StringFormattingTool.formatFloat(speed * 3.125f)) // 3.125 is is 50/16
+        CreateLang.translate("tooltip.create_new_age.temperature.ps", StringFormattingTool.formatFloat(speed * 3.125f)) // 3.125 is is 50/16
                 .style(ChatFormatting.AQUA).forGoggles(tooltip, 2);
 
         return super.addToGoggleTooltip(tooltip, isPlayerSneaking);
@@ -140,5 +140,12 @@ public class StirlingEngineBlockEntity extends GeneratingKineticBlockEntity impl
     public void setHeat(float amount) {
         heat = amount;
         setChanged();
+    }
+
+    @Override
+    public float calculateAddedStressCapacity() {
+        float impact = 32.0f;
+        this.lastStressApplied = impact;
+        return impact;
     }
 }
