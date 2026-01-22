@@ -1,5 +1,5 @@
 plugins {
-	id "dev.architectury.loom" version "1.1-SNAPSHOT"
+	id "dev.architectury.loom" version "1.7-SNAPSHOT"
 	id "maven-publish"
 }
 
@@ -12,18 +12,15 @@ archivesBaseName = project.archives_base_name
 repositories {
 	mavenLocal()
 	maven { url = "https://maven.shedaniel.me/" } // Cloth Config, REI
-//	maven { url = "https://dvs1.progwml6.com/files/maven/" } // JEI
+	maven { url = "https://maven.blamejared.com/" } // JEI
 	maven { url = "https://maven.parchmentmc.org" } // Parchment mappings
-	maven { url = "https://maven.quiltmc.org/repository/release" } // Quilt Mappings
-	maven { url = "https://api.modrinth.com/maven" } // LazyDFU
-	maven { url = "https://maven.terraformersmc.com/releases/" } // Mod Menu
-	maven { url = "https://mvn.devos.one/snapshots/" } // Create, Porting Lib, Forge Tags, Milk Lib, Registrate
-	maven { url = "https://cursemaven.com" } // Forge Config API Port
+	maven { url = "https://api.modrinth.com/maven" } // Modrinth
 	maven { url = "https://maven.jamieswhiteshirt.com/libs-release" } // Reach Entity Attributes
-	maven { url = "https://jitpack.io/" } // Mixin Extras, Fabric ASM
-	maven { url = "https://maven.tterrag.com/" } // Flywheel
+	maven { url = "https://jitpack.io/" } // Mixin Extras
+	maven { url = "https://maven.createmod.net" } // Create, Ponder, Flywheel
+	maven { url = "https://maven.tterrag.com/" } // Registrate
+	maven { url = "https://raw.githubusercontent.com/Fuzss/modresources/main/maven/" } // Forge Config API Port
 	maven {
-		// Location of the maven that hosts Mine and Team Resourceful's files.
 		name = "Resourceful Bees Maven"
 		url = "https://maven.resourcefulbees.com/repository/maven-public/"
 	}
@@ -35,52 +32,58 @@ loom {
 			sourceSet sourceSets.main
 		}
 	}
+	forge {
+		mixinConfigs = [
+			"create_new_age.mixins.json",
+			"create.mixins.json"
+		]
+		runs {
+			client {
+				property("mixin.env.remapRefMap", "true")
+				property("mixin.env.refMapRemappingFile", "${projectDir}/build/createSrgToMcp/output.srg")
+			}
+		}
+	}
 }
 
 dependencies {
 	minecraft("com.mojang:minecraft:${minecraft_version}")
-	mappings(loom.layered {
-		it.mappings("org.quiltmc:quilt-mappings:${minecraft_version}+build.${qm_version}:intermediary-v2")
-		it.parchment("org.parchmentmc.data:parchment-${minecraft_version}:${parchment_version}@zip")
-		it.officialMojangMappings { nameSyntheticMembers = false }
-	})
+	mappings loom.officialMojangMappings()
 
-	modImplementation "net.fabricmc:fabric-loader:${project.loader_version}"
+	forge "net.minecraftforge:forge:${project.forge_version}"
 
-	modImplementation "net.fabricmc.fabric-api:fabric-api:${project.fabric_version}"
+	// Create
+	modImplementation("com.simibubi.create:create-${minecraft_version}:${project.create_version}:slim") { transitive = false }
+	modImplementation("net.createmod.ponder:Ponder-Forge-${minecraft_version}:${project.ponder_version}")
+	modCompileOnly("dev.engine-room.flywheel:flywheel-forge-api-${minecraft_version}:${project.flywheel_version}")
+	modRuntimeOnly("dev.engine-room.flywheel:flywheel-forge-${minecraft_version}:${project.flywheel_version}")
+	modImplementation("com.tterrag.registrate:Registrate:${project.registrate_version}")
+	compileOnly(annotationProcessor("io.github.llamalad7:mixinextras-common:0.4.1"))
+	implementation("io.github.llamalad7:mixinextras-forge:0.4.1")
 
-	// Oh great create
-	modImplementation("com.simibubi.create:create-fabric-${minecraft_version}:${create_version}")
+	// Botarium
+	modImplementation "earth.terrarium:botarium-common-${minecraft_version}:${project.botarium_version}"
+	modApi("earth.terrarium:botarium-forge-${minecraft_version}:${project.botarium_version}")
 
-	// Botarium for energy API
-	modImplementation "earth.terrarium:botarium-common-${minecraft_version}:${botarium_version}"
-	modApi("earth.terrarium:botarium-fabric-${minecraft_version}:${botarium_version}")
+	// Recipe viewers
+	modCompileOnly("dev.emi:emi-forge:${project.emi_version}");
+	compileOnly("mezz.jei:jei-${minecraft_version}-common-api:${project.jei_version}")
+	compileOnly("mezz.jei:jei-${minecraft_version}-forge-api:${project.jei_version}")
+	modCompileOnly("me.shedaniel:RoughlyEnoughItems-forge:${project.rei_version}");
 
-	// For testing electricity stuff, don't actually use classes provided by it
-	modImplementation("earth.terrarium.adastra:ad_astra-fabric-$minecraft_version:$ad_astra_version")
-	modImplementation "maven.modrinth:ae2:Mdn0ka1O"
-	modImplementation "maven.modrinth:createaddition:ogRcUOQY"
-
-	modImplementation("com.terraformersmc:modmenu:${modmenu_version}")
-
-	modCompileOnly("dev.emi:emi-fabric:${emi_version}");
-	modCompileOnly("mezz.jei:jei-${minecraft_version}-fabric:${jei_version}")
-	modCompileOnly("me.shedaniel:RoughlyEnoughItems-fabric:${rei_version}");
-
-
-	switch (recipe_viewer.toLowerCase(Locale.ROOT)) {
-		case "jei": modLocalRuntime("mezz.jei:jei-${minecraft_version}-fabric:${jei_version}"); break
-		case "rei": modLocalRuntime("me.shedaniel:RoughlyEnoughItems-fabric:${rei_version}"); break
-		case "emi": modLocalRuntime("dev.emi:emi-fabric:${emi_version}"); break
+	switch (project.recipe_viewer.toLowerCase(Locale.ROOT)) {
+		case "jei": modLocalRuntime("maven.modrinth:jei:${project.jei_runtime}"); break
+		case "rei": modLocalRuntime("me.shedaniel:RoughlyEnoughItems-forge:${project.rei_version}"); break
+		case "emi": modLocalRuntime("dev.emi:emi-forge:${project.emi_version}"); break
 		case "disabled": break
-		default: println("Unknown recipe viewer specified: ${recipe_viewer}. Must be JEI, REI, EMI, or disabled.")
+		default: println("Unknown recipe viewer specified: ${project.recipe_viewer}. Must be JEI, REI, EMI, or disabled.")
 	}
 }
 
 processResources {
 	inputs.property "version", project.version
 
-	filesMatching("fabric.mod.json") {
+	filesMatching("META-INF/mods.toml") {
 		expand "version": project.version
 	}
 }
@@ -102,6 +105,17 @@ java {
 jar {
 	from("LICENSE") {
 		rename { "${it}_${project.base.archivesName.get()}"}
+	}
+	manifest {
+		attributes([
+				"Specification-Title"     : "create-new-age",
+				"Specification-Vendor"    : "AntarcticGardens",
+				"Specification-Version"   : "1",
+				"Implementation-Title"    : "Create: New Age",
+				"Implementation-Version"  : "1",
+				"Implementation-Vendor"   : "AntarcticGardens",
+				"Implementation-Timestamp": new Date().format("yyyy-MM-dd'T'HH:mm:ssZ")
+		])
 	}
 }
 
