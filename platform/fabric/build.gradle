@@ -1,0 +1,67 @@
+plugins {
+	id "dev.architectury.loom"
+}
+
+architectury {
+	platformSetupLoomIde()
+	fabric()
+}
+
+loom {
+	mods {
+		"create-new-age" {
+			sourceSet sourceSets.main
+		}
+	}
+}
+
+configurations {
+	common
+	compileClasspath.extendsFrom common
+	runtimeClasspath.extendsFrom common
+	developmentFabric.extendsFrom common
+}
+
+dependencies {
+	modImplementation "net.fabricmc:fabric-loader:${project.loader_version}"
+	modImplementation "net.fabricmc.fabric-api:fabric-api:${project.fabric_version}"
+
+	// Create
+	modImplementation("com.simibubi.create:create-fabric-${project.minecraft_version}:${project.create_version}")
+
+	// Botarium
+	modImplementation "earth.terrarium:botarium-common-${project.minecraft_version}:${project.botarium_version}"
+	modApi("earth.terrarium:botarium-fabric-${project.minecraft_version}:${project.botarium_version}")
+
+	// Testing dependencies
+	modImplementation("earth.terrarium.adastra:ad_astra-fabric-${project.minecraft_version}:${project.ad_astra_version}")
+	modImplementation "maven.modrinth:ae2:Mdn0ka1O"
+	modImplementation "maven.modrinth:createaddition:ogRcUOQY"
+	modImplementation("com.terraformersmc:modmenu:${project.modmenu_version}")
+
+	modCompileOnly("dev.emi:emi-fabric:${project.emi_version}");
+	modCompileOnly("mezz.jei:jei-${project.minecraft_version}-fabric:${project.jei_version}")
+	modCompileOnly("me.shedaniel:RoughlyEnoughItems-fabric:${project.rei_version}");
+
+	switch (project.recipe_viewer.toLowerCase(Locale.ROOT)) {
+		case "jei": modLocalRuntime("mezz.jei:jei-${project.minecraft_version}-fabric:${project.jei_version}"); break
+		case "rei": modLocalRuntime("me.shedaniel:RoughlyEnoughItems-fabric:${project.rei_version}"); break
+		case "emi": modLocalRuntime("dev.emi:emi-fabric:${project.emi_version}"); break
+		case "disabled": break
+		default: println("Unknown recipe viewer specified: ${project.recipe_viewer}. Must be JEI, REI, EMI, or disabled.")
+	}
+}
+
+processResources {
+	inputs.property "version", project.version
+
+	filesMatching("fabric.mod.json") {
+		expand "version": project.version
+	}
+}
+
+jar {
+	from("LICENSE") {
+		rename { "${it}_${project.base.archivesName.get()}"}
+	}
+}

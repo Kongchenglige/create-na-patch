@@ -1,0 +1,19 @@
+{
+  "variants": {
+    "blaze=none": {
+      "model": "create_new_age:block/heat/heater/heater"
+    },
+    "blaze=smouldering": {
+      "model": "create_new_age:block/heat/heater/heater_on_1"
+    },
+    "blaze=fading": {
+      "model": "create_new_age:block/heat/heater/heater_on_3"
+    },
+    "blaze=kindled": {
+      "model": "create_new_age:block/heat/heater/heater_on_4"
+    },
+    "blaze=seething": {
+      "model": "create_new_age:block/heat/heater/heater_on_5"
+    }
+  }
+}

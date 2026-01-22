@@ -1,0 +1,17 @@
+{
+  "variants": {
+    "axis=x": {
+      "model": "create_new_age:block/heat/stirling_engine",
+      "x": 90,
+      "y": 90
+    },
+    "axis=y": {
+      "model": "create_new_age:block/heat/stirling_engine"
+    },
+    "axis=z": {
+      "model": "create_new_age:block/heat/stirling_engine",
+      "x": 90,
+      "y": 180
+    }
+  }
+}

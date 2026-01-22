@@ -1,0 +1,45 @@
+# Done to increase the memory available to gradle.
+org.gradle.jvmargs=-Xmx2G
+org.gradle.parallel=true
+
+# Fabric Properties
+# check these on https://fabricmc.net/develop
+minecraft_version=1.20.1
+yarn_mappings=1.20.1+build.9
+loader_version=0.14.22
+
+
+
+# Mod Properties
+mod_version=1.1.2
+maven_group=org.antarcticgardens.create_new_age
+archives_base_name=create-new-age-fabric-1.20.1
+
+# Dependencies
+fabric_version=0.87.0+1.20.1
+
+# Mappings
+# https://lambdaurora.dev/tools/import_quilt.html
+qm_version = 20
+# https://parchmentmc.org/docs/getting-started
+parchment_version = 2023.07.09
+
+create_version = 0.5.1-c-build.1110+mc1.20.1
+
+botarium_version = 2.1.2
+
+# ad astra needed for testing
+ad_astra_version = 1.15.2
+
+recipe_viewer = emi
+# JEI - https://www.curseforge.com/minecraft/mc-mods/jei/files/all
+jei_version = 15.2.0.23
+# REI - https://modrinth.com/mod/roughly-enough-items/versions
+rei_version = 12.0.634
+# EMI - https://modrinth.com/mod/emi/versions
+emi_version = 1.0.12+1.20.1
+
+# Mod Menu - https://modrinth.com/mod/modmenu/versions
+modmenu_version = 7.1.0
+# LazyDFU - https://modrinth.com/mod/lazydfu/versions
+lazydfu_version = 0.1.3

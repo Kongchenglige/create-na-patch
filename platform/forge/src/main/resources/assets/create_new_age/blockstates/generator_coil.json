@@ -1,0 +1,17 @@
+{
+  "variants": {
+    "axis=x": {
+      "model": "create_new_age:block/generation/generator_coil",
+      "x": 90,
+      "y": 90
+    },
+    "axis=y": {
+      "model": "create_new_age:block/generation/generator_coil"
+    },
+    "axis=z": {
+      "model": "create_new_age:block/generation/generator_coil",
+      "x": 90,
+      "y": 180
+    }
+  }
+}

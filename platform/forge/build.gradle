@@ -1,0 +1,91 @@
+plugins {
+	id "dev.architectury.loom"
+}
+
+architectury {
+	platformSetupLoomIde()
+	forge()
+}
+
+loom {
+	mods {
+		"create-new-age" {
+			sourceSet sourceSets.main
+		}
+	}
+	forge {
+		mixinConfigs = [
+				"create_new_age.mixins.json",
+				"create.mixins.json"
+		]
+		runs {
+			client {
+				property("mixin.env.remapRefMap", "true")
+				property("mixin.env.refMapRemappingFile", "${projectDir}/build/createSrgToMcp/output.srg")
+			}
+		}
+	}
+}
+
+configurations {
+	common
+	compileClasspath.extendsFrom common
+	runtimeClasspath.extendsFrom common
+	developmentForge.extendsFrom common
+}
+
+dependencies {
+	forge "net.minecraftforge:forge:${project.forge_version}"
+
+	// Create
+	modImplementation("com.simibubi.create:create-${project.minecraft_version}:${project.create_version}:slim") { transitive = false }
+	modImplementation("net.createmod.ponder:Ponder-Forge-${project.minecraft_version}:${project.ponder_version}")
+	modCompileOnly("dev.engine-room.flywheel:flywheel-forge-api-${project.minecraft_version}:${project.flywheel_version}")
+	modRuntimeOnly("dev.engine-room.flywheel:flywheel-forge-${project.minecraft_version}:${project.flywheel_version}")
+	modImplementation("com.tterrag.registrate:Registrate:${project.registrate_version}")
+	compileOnly(annotationProcessor("io.github.llamalad7:mixinextras-common:0.4.1"))
+	implementation("io.github.llamalad7:mixinextras-forge:0.4.1")
+
+	// Botarium
+	modImplementation "earth.terrarium:botarium-common-${project.minecraft_version}:${project.botarium_version}"
+	modApi("earth.terrarium:botarium-forge-${project.minecraft_version}:${project.botarium_version}")
+
+	// Recipe viewers
+	modCompileOnly("dev.emi:emi-forge:${project.emi_version}");
+	compileOnly("mezz.jei:jei-${project.minecraft_version}-common-api:${project.jei_version}")
+	compileOnly("mezz.jei:jei-${project.minecraft_version}-forge-api:${project.jei_version}")
+	modCompileOnly("me.shedaniel:RoughlyEnoughItems-forge:${project.rei_version}");
+
+	switch (project.recipe_viewer.toLowerCase(Locale.ROOT)) {
+		case "jei": modLocalRuntime("maven.modrinth:jei:${project.jei_runtime}"); break
+		case "rei": modLocalRuntime("me.shedaniel:RoughlyEnoughItems-forge:${project.rei_version}"); break
+		case "emi": modLocalRuntime("dev.emi:emi-forge:${project.emi_version}"); break
+		case "disabled": break
+		default: println("Unknown recipe viewer specified: ${project.recipe_viewer}. Must be JEI, REI, EMI, or disabled.")
+	}
+}
+
+processResources {
+	inputs.property "version", project.version
+
+	filesMatching("META-INF/mods.toml") {
+		expand "version": project.version
+	}
+}
+
+jar {
+	from("LICENSE") {
+		rename { "${it}_${project.base.archivesName.get()}"}
+	}
+    manifest {
+        attributes([
+                "Specification-Title"     : "create-new-age",
+                "Specification-Vendor"    : "AntarcticGardens",
+                "Specification-Version"   : "1",
+                "Implementation-Title"    : "Create: New Age",
+                "Implementation-Version"  : "1",
+                "Implementation-Vendor"   : "AntarcticGardens",
+                "Implementation-Timestamp": new Date().format("yyyy-MM-dd'T'HH:mm:ssZ")
+        ])
+    }
+}
